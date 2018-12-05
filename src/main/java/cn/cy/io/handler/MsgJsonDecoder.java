@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.cy.io.vo.MqMessage;
+import cn.cy.io.vo.AbstractMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -41,28 +41,31 @@ public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
 
             String rawStr = (String) input.readCharSequence((input).readableBytes(), Charset.defaultCharset());
 
-            MqMessage mqMessage = JSON.parseObject(rawStr, MqMessage.class);
+            AbstractMessage abstractMessage = JSON.parseObject(rawStr, AbstractMessage.class);
 
-            attachMsg(ctx, mqMessage);
+            attachMsg(ctx, abstractMessage);
 
             ((ByteBuf) msg).release();
 
-            ctx.fireChannelRead(mqMessage);
+            ctx.fireChannelRead(abstractMessage);
+        } else {
+            throw new IllegalArgumentException(
+                    "invalid type is received by the MsgJsonDecoder, type is " + msg.getClass());
         }
     }
 
-    private void attachMsg(ChannelHandlerContext ctx, MqMessage mqMessage) {
+    private void attachMsg(ChannelHandlerContext ctx, AbstractMessage abstractMessage) {
 
-        Attribute<List<MqMessage>> attribute = ctx.channel().attr(AttributeKey.valueOf("msg"));
+        Attribute<List<AbstractMessage>> attribute = ctx.channel().attr(AttributeKey.valueOf("msg"));
 
-        List<MqMessage> messageList = attribute.get();
+        List<AbstractMessage> messageList = attribute.get();
 
         if (messageList == null) {
             messageList = new ArrayList<>();
-            messageList.add(mqMessage);
+            messageList.add(abstractMessage);
             attribute.set(messageList);
         } else {
-            messageList.add(mqMessage);
+            messageList.add(abstractMessage);
         }
 
     }

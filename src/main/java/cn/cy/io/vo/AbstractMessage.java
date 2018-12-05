@@ -1,6 +1,12 @@
 package cn.cy.io.vo;
 
-public class MqMessage {
+/**
+ * 所有消息的基类
+ */
+public abstract class AbstractMessage {
+
+    private Integer type;
+
     private String desc;
 
     private String requestId;
@@ -19,5 +25,13 @@ public class MqMessage {
 
     public void setRequestId(String requestId) {
         this.requestId = requestId;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

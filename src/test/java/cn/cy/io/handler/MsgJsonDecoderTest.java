@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 
-import cn.cy.io.vo.MqMessage;
+import cn.cy.io.vo.AbstractMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -17,7 +17,7 @@ import io.netty.handler.codec.json.JsonObjectDecoder;
 
 public class MsgJsonDecoderTest {
 
-    private List<MqMessage> mqDatas;
+    private List<AbstractMessage> mqDatas;
 
     @Before
     public void init() {
@@ -27,10 +27,10 @@ public class MsgJsonDecoderTest {
 
         for (int i = 0; i < x; i++) {
 
-            MqMessage mqMessage = new MqMessage();
-            mqMessage.setRequestId(String.valueOf(i));
+            AbstractMessage abstractMessage = new AbstractMessage();
+            abstractMessage.setRequestId(String.valueOf(i));
 
-            mqDatas.add(mqMessage);
+            mqDatas.add(abstractMessage);
         }
     }
 
@@ -39,7 +39,7 @@ public class MsgJsonDecoderTest {
 
         ByteBuf byteBuf = Unpooled.buffer();
 
-        for (MqMessage mqData : mqDatas) {
+        for (AbstractMessage mqData : mqDatas) {
             byteBuf.writeBytes(JSON.toJSONBytes(mqData));
         }
 
@@ -54,11 +54,11 @@ public class MsgJsonDecoderTest {
         // 测试解出来的消息对不对
         int idx = 0;
         while (true) {
-            MqMessage mqMessage = embeddedChannel.readInbound();
-            if (mqMessage == null) {
+            AbstractMessage abstractMessage = embeddedChannel.readInbound();
+            if (abstractMessage == null) {
                 break;
             }
-            Assert.assertEquals(mqMessage.getRequestId(), String.valueOf(idx));
+            Assert.assertEquals(abstractMessage.getRequestId(), String.valueOf(idx));
             idx++;
         }
 
