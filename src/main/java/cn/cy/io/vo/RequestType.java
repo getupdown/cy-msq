@@ -1,6 +1,6 @@
 package cn.cy.io.vo;
 
-public enum MessageType {
+public enum RequestType {
 
     /**
      * 来自于producer的消息提交
@@ -12,10 +12,10 @@ public enum MessageType {
      */
     MESSAGE_PULL(1, "消息拖取");
 
-    public int id;
-    public String desc;
+    final public int id;
+    final public String desc;
 
-    MessageType(int id, String desc) {
+    RequestType(int id, String desc) {
         this.id = id;
         this.desc = desc;
     }

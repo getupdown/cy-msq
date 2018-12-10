@@ -1,15 +1,17 @@
 package cn.cy.io.vo;
 
 /**
- * 所有消息的基类
+ * 所有消息(请求, 响应)的基类
  */
-public abstract class AbstractMessage {
+public class BaseInfo<T> {
 
     private Integer type;
 
     private String desc;
 
     private String requestId;
+
+    private T data;
 
     public String getDesc() {
         return desc;
@@ -33,5 +35,13 @@ public abstract class AbstractMessage {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }

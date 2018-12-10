@@ -1,4 +1,4 @@
-package cn.cy.io.handler;
+package cn.cy.io.handler.dispatch;
 
 import java.util.List;
 
@@ -8,13 +8,18 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import cn.cy.io.handler.BaseTest;
+import cn.cy.io.handler.MsgJsonDecoder;
 import cn.cy.io.vo.BaseInfo;
+import cn.cy.io.vo.request.CommitRequest;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
-public class MsgJsonDecoderTest extends BaseTest {
+public class CommitRequestDispatchHandlerTest extends BaseTest {
 
     private List<BaseInfo> mqDatas;
+
+    private String testStr = "test1";
 
     @Before
     public void init() {
@@ -24,9 +29,12 @@ public class MsgJsonDecoderTest extends BaseTest {
 
         for (int i = 0; i < x; i++) {
 
-            BaseInfo baseInfo = new BaseInfo();
+            BaseInfo<CommitRequest> baseInfo = new BaseInfo<>();
             baseInfo.setRequestId(String.valueOf(i));
             baseInfo.setType(0);
+            CommitRequest request = new CommitRequest();
+            request.setMsg(testStr);
+            baseInfo.setData(request);
 
             mqDatas.add(baseInfo);
         }
@@ -37,7 +45,8 @@ public class MsgJsonDecoderTest extends BaseTest {
 
         EmbeddedChannel embeddedChannel = new EmbeddedChannel(
                 new JsonObjectDecoder(),
-                new MsgJsonDecoder()
+                new MsgJsonDecoder(),
+                new CommitRequestDispatchHandler()
         );
 
         writeAndFlushDatas(mqDatas, embeddedChannel);
@@ -50,9 +59,12 @@ public class MsgJsonDecoderTest extends BaseTest {
                 break;
             }
             Assert.assertEquals(baseInfo.getRequestId(), String.valueOf(idx));
+            Assert.assertTrue(baseInfo.getData() instanceof CommitRequest);
+            Assert.assertEquals(testStr, ((CommitRequest) baseInfo.getData()).getMsg());
             idx++;
         }
 
         Assert.assertEquals(idx, mqDatas.size());
     }
+
 }

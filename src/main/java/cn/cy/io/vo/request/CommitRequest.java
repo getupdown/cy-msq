@@ -1,11 +1,9 @@
 package cn.cy.io.vo.request;
 
-import cn.cy.io.vo.AbstractMessage;
-
 /**
  * producer生产消息
  */
-public class CommitRequest extends AbstractMessage {
+public class CommitRequest {
 
     /**
      * 消息本体

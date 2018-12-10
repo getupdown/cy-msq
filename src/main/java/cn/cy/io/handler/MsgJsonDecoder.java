@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
-import cn.cy.io.vo.AbstractMessage;
+import cn.cy.io.vo.BaseInfo;
+import cn.cy.io.vo.RequestType;
+import cn.cy.io.vo.request.CommitRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -41,32 +44,57 @@ public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
 
             String rawStr = (String) input.readCharSequence((input).readableBytes(), Charset.defaultCharset());
 
-            AbstractMessage abstractMessage = JSON.parseObject(rawStr, AbstractMessage.class);
+            BaseInfo baseInfo = JSON.parseObject(rawStr, BaseInfo.class);
 
-            attachMsg(ctx, abstractMessage);
+            baseInfo = buildRealObject(baseInfo, rawStr);
 
-            ((ByteBuf) msg).release();
+            attachMsg(ctx, baseInfo);
 
-            ctx.fireChannelRead(abstractMessage);
+            ctx.fireChannelRead(baseInfo);
         } else {
             throw new IllegalArgumentException(
                     "invalid type is received by the MsgJsonDecoder, type is " + msg.getClass());
         }
     }
 
-    private void attachMsg(ChannelHandlerContext ctx, AbstractMessage abstractMessage) {
+    private void attachMsg(ChannelHandlerContext ctx, BaseInfo baseInfo) {
 
-        Attribute<List<AbstractMessage>> attribute = ctx.channel().attr(AttributeKey.valueOf("msg"));
+        Attribute<List<BaseInfo>> attribute = ctx.channel().attr(AttributeKey.valueOf("msg"));
 
-        List<AbstractMessage> messageList = attribute.get();
+        List<BaseInfo> messageList = attribute.get();
 
         if (messageList == null) {
             messageList = new ArrayList<>();
-            messageList.add(abstractMessage);
+            messageList.add(baseInfo);
             attribute.set(messageList);
         } else {
-            messageList.add(abstractMessage);
+            messageList.add(baseInfo);
         }
 
+    }
+
+    /**
+     * 实例化对象
+     *
+     * @param rawStr
+     *
+     * @return
+     */
+    private BaseInfo buildRealObject(BaseInfo request, String rawStr) {
+
+        // 就这样干吧..
+        if (request.getType() == RequestType.MESSAGE_COMMIT.id) {
+
+            BaseInfo<CommitRequest> commitRequest = JSON.parseObject(rawStr, new
+                    TypeReference<BaseInfo<CommitRequest>>() {
+                    });
+
+            return commitRequest;
+
+        } else if (request.getType() == RequestType.MESSAGE_PULL.id) {
+
+        }
+
+        return null;
     }
 }
