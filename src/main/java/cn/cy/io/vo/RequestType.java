@@ -12,8 +12,8 @@ public enum RequestType {
      */
     MESSAGE_PULL(1, "消息拖取");
 
-    final public int id;
-    final public String desc;
+    public final int id;
+    public final String desc;
 
     RequestType(int id, String desc) {
         this.id = id;

@@ -5,6 +5,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
+ * AbstractDispatcherHandler, parent of handlers need to dispatch message.
+ *
+ * @author getupdown
+ * @date 2018/12/11
+ *
  * 这里使用一个责任链模式, 消息种类不多不影响效率
  * 在这里判断消息类型 {@link cn.cy.io.vo.RequestType}，并且触发相对应的核心逻辑
  */
@@ -38,7 +43,7 @@ public abstract class AbstractDispatchHandler extends ChannelInboundHandlerAdapt
     /**
      * 是否接受这种消息
      *
-     * @return
+     * @return accept or not
      */
     protected abstract boolean accepted(BaseInfo baseInfo);
 }
