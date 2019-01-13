@@ -77,6 +77,13 @@
             <version>26.0-jre</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/commons-transaction/commons-transaction -->
+        <dependency>
+            <groupId>commons-transaction</groupId>
+            <artifactId>commons-transaction</artifactId>
+            <version>1.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

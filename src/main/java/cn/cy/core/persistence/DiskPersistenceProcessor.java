@@ -24,15 +24,17 @@ public class DiskPersistenceProcessor implements PersistenceProcessor {
     }
 
     /**
-     * 把消息持久化至硬盘上
+     * 把消息追加持久化至硬盘上
      *
      * @param target
      *
      * @throws IOException
      */
     @Override
-    public void persistent(Byte[] target) throws IOException {
+    public void appendPersistent(Byte[] target) throws IOException {
         ensureOpen();
+
+        // 在这里采用了直接mmap追加的方式
     }
 
     /**
