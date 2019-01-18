@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,16 +22,23 @@ public class MappedFileTest {
 
     private MappedFile mappedFile;
 
+    private String writtenStr;
+
     public MappedFileTest() throws URISyntaxException {
     }
 
     @Before
     public void before() throws IOException, URISyntaxException {
 
-        path = Paths.get(
-                getClass().getClassLoader().getResource("testdata/persistence/input_1.log").toURI());
+        path = Files.createTempFile(Paths.get(getClass().getClassLoader().getResource("testdata/persistence")
+                .toURI()), "test", "mappedFile_1.log");
 
         mappedFile = new MappedFile(path);
+    }
+
+    @After
+    public void after() throws IOException {
+        Files.delete(path);
     }
 
     private String readFileAsString(int size) throws IOException {
@@ -53,13 +62,7 @@ public class MappedFileTest {
     }
 
     @Test
-    public void testReadFromFile() throws IOException {
-        String res = readFileAsString(100);
-        System.out.println(res);
-    }
-
-    @Test
-    public void testNormalAppend() throws IOException {
+    public void testNormalAppend1() throws IOException {
 
         int repeatTime = 10000;
 
@@ -76,5 +79,17 @@ public class MappedFileTest {
         String s1 = readFileAsString(s.length() * repeatTime);
 
         assertFileContent(s1, Strings.repeat(s, repeatTime));
+    }
+
+    @Test
+    public void testNormalAppend2() throws IOException {
+        // 一次性大量
+        writtenStr = Strings.repeat("qweasdzxcasdqweasdzxcasdqweasdzxc", 100000);
+
+        mappedFile.append(Bytes.asList(writtenStr.getBytes()).toArray(new Byte[0]), true);
+
+        String s1 = readFileAsString(writtenStr.length());
+
+        assertFileContent(s1, writtenStr);
     }
 }

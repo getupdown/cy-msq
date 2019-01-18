@@ -6,6 +6,8 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import sun.misc.LRUCache;
+
 public class MappedFile {
 
     private FileChannel fileChannel;
@@ -21,6 +23,11 @@ public class MappedFile {
      * 尾部偏移量大小
      */
     private long tailOffset = 0L;
+
+    /**
+     * 每一页的大小, 降低锁粒度
+     */
+    private static final long PAGE_SIZE = 8192;
 
     public MappedFile(Path path) {
         this.path = path;
