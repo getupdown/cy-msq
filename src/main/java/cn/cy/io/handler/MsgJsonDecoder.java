@@ -1,15 +1,10 @@
 package cn.cy.io.handler;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-
 import cn.cy.io.vo.BaseInfo;
 import cn.cy.io.vo.RequestType;
 import cn.cy.io.vo.request.CommitRequest;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,11 +13,15 @@ import io.netty.handler.codec.json.JsonObjectDecoder;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 这个 {@link JsonObjectDecoder} 只会把东西按照括号分组
  * 分组完了之后，会<b>依次</b>触发ctx的channelRead事件, 也就是把这些对象接着往下传递
- * <p>
- * 这里是把那些对象,变成业务可以理解的对象的过程
+ *
+ * <p>这里是把那些对象,变成业务可以理解的对象的过程
  */
 @ChannelHandler.Sharable
 public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
@@ -77,7 +76,6 @@ public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
      * 实例化对象
      *
      * @param rawStr
-     *
      * @return
      */
     private BaseInfo buildRealObject(BaseInfo request, String rawStr) {
@@ -85,11 +83,9 @@ public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
         // 就这样干吧..
         if (request.getType() == RequestType.MESSAGE_COMMIT.id) {
 
-            BaseInfo<CommitRequest> commitRequest = JSON.parseObject(rawStr, new
+            return JSON.parseObject(rawStr, new
                     TypeReference<BaseInfo<CommitRequest>>() {
                     });
-
-            return commitRequest;
 
         } else if (request.getType() == RequestType.MESSAGE_PULL.id) {
 
