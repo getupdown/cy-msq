@@ -3,6 +3,7 @@ package cn.cy.core.queue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.junit.Assert;
@@ -49,9 +50,11 @@ public class TransientMessageQueueTest {
      *
      * @param dataChecker 消费数据的后置断言
      */
-    private void consumeData(Function<List<QueuedMessage>, Boolean> dataChecker) throws InterruptedException {
+    private void consumeData(Function<List<QueuedMessage>, Boolean> dataChecker, int tn, int tc) throws InterruptedException {
 
         List<QueuedMessage> consumedMsg = new ArrayList<>();
+
+        CountDownLatch readCountDown = new CountDownLatch(tn * tc);
 
         new Thread(() -> {
 
@@ -61,6 +64,7 @@ public class TransientMessageQueueTest {
                     QueuedMessage msg = messageQueue.consumeMsgAt(x);
                     consumedMsg.add(msg);
                     x++;
+                    countDownLatch.countDown();
                 } catch (QueueAccessOutOfIndexException e) {
                     // ignore
                 }
@@ -69,7 +73,7 @@ public class TransientMessageQueueTest {
         }).start();
 
         countDownLatch.await();
-
+        readCountDown.await(10, TimeUnit.SECONDS);
         Assert.assertTrue(dataChecker.apply(consumedMsg));
     }
 
@@ -84,6 +88,6 @@ public class TransientMessageQueueTest {
         offerData(tn, tc);
         consumeData((queuedMessages -> {
             return queuedMessages.size() == tn * tc;
-        }));
+        }), tn, tc);
     }
 }

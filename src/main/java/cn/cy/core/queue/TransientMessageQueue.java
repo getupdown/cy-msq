@@ -31,6 +31,9 @@ public class TransientMessageQueue implements MessageQueue {
     // 每次轮询最大读取元素个数
     private int POOLING_MAX_CNT = 10000;
 
+    // 从写队列拷贝元素至读队列的时间间隔
+    private int COPY_TIME_INTERVAL = 0;
+
     // 用于控制队列状态的读写锁
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
@@ -38,6 +41,11 @@ public class TransientMessageQueue implements MessageQueue {
     // 0 : read
     // 1 : write
     private int status = 0;
+
+    public TransientMessageQueue() {
+        new Thread(new TransientMessageQueueMonitor(this)).start();
+        System.out.println("Monitor thread started");
+    }
 
     /**
      * 把消息加入被写队列
@@ -88,7 +96,6 @@ public class TransientMessageQueue implements MessageQueue {
 
         try {
             lock.lock();
-
             for (int i = 0; i < POOLING_MAX_CNT; i++) {
                 QueuedMessage msg = writeFIFOQueue.poll();
                 if (msg == null) {
@@ -96,9 +103,49 @@ public class TransientMessageQueue implements MessageQueue {
                 }
                 readRandomQueue.add(msg);
             }
-
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * 定时拷贝线程对象
+     */
+    private class TransientMessageQueueMonitor implements Runnable{
+
+        private TransientMessageQueue queue;
+
+        public TransientMessageQueueMonitor(TransientMessageQueue queue) {
+            this.queue = queue;
+        }
+
+        @Override
+        public void run() {
+
+            int timeInterval = queue.COPY_TIME_INTERVAL;
+            if (timeInterval < 0) {
+                throw new IllegalArgumentException("TimeInterval is less than or equals to 0");
+            }
+
+            long startTime;
+            long endTime;
+            long pollTime;
+            long modifyTime;
+
+            while(queue != null) {
+                try {
+                    startTime = System.currentTimeMillis();
+                    queue.polling();
+                    endTime = System.currentTimeMillis();
+                    pollTime = endTime - startTime;
+                    modifyTime = pollTime > timeInterval ? timeInterval : pollTime;
+                    Thread.sleep(timeInterval - modifyTime);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+        }
+
     }
 }
