@@ -15,8 +15,6 @@ import cn.cy.io.vo.request.CommitRequest;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
-import static cn.cy.io.queue.BasicQueue.BASIC_QUEUE;
-
 public class CommitRequestDispatchHandlerTest extends BaseTest {
 
     private List<BaseInfo> mqDatas;
@@ -69,30 +67,4 @@ public class CommitRequestDispatchHandlerTest extends BaseTest {
         Assert.assertEquals(idx, mqDatas.size());
     }
 
-    @Test
-    public void core() {
-        EmbeddedChannel embeddedChannel = new EmbeddedChannel(
-                new JsonObjectDecoder(),
-                new MsgJsonDecoder(),
-                new CommitRequestDispatchHandler()
-        );
-
-        writeAndFlushDatas(mqDatas, embeddedChannel);
-
-        // 测试解出来的消息对不对
-        int idx = 0;
-        while (true) {
-            BaseInfo baseInfo = embeddedChannel.readInbound();
-            if (baseInfo == null) {
-                break;
-            }
-            Assert.assertEquals(baseInfo.getRequestId(), String.valueOf(idx));
-            Assert.assertTrue(baseInfo.getData() instanceof CommitRequest);
-            Assert.assertEquals(testStr, ((CommitRequest) baseInfo.getData()).getMsg());
-            Assert.assertEquals(BASIC_QUEUE.pull(), ((CommitRequest) baseInfo.getData()).getMsg());
-            idx++;
-        }
-        Assert.assertTrue(BASIC_QUEUE.isEmpty());
-        Assert.assertEquals(idx, mqDatas.size());
-    }
 }
