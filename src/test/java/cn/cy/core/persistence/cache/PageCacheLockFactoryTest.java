@@ -13,18 +13,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PageCacheLockTest {
+public class PageCacheLockFactoryTest {
 
     @Before
     public void init() {
     }
 
     public static class WorkModule implements Runnable {
-        private final PageCacheDebugLock pageCacheLock;
+        private final PageCacheDebugLockFactory pageCacheLock;
 
         private final Integer reqInterval;
 
-        public WorkModule(PageCacheDebugLock pageCacheLock, Integer reqInterval) {
+        public WorkModule(PageCacheDebugLockFactory pageCacheLock, Integer reqInterval) {
             this.pageCacheLock = pageCacheLock;
             this.reqInterval = reqInterval;
         }
@@ -55,7 +55,7 @@ public class PageCacheLockTest {
     @Test
     public void testRunnable() throws InterruptedException {
 
-        PageCacheDebugLock pageCacheLock = new PageCacheDebugLock(20, Integer.MAX_VALUE);
+        PageCacheDebugLockFactory pageCacheLock = new PageCacheDebugLockFactory(20, Integer.MAX_VALUE);
 
         // 启动8个线程
         // 验证可行性
@@ -84,7 +84,7 @@ public class PageCacheLockTest {
     public void testWithoutRebuild() throws InterruptedException {
 
         // 间隔设置大, 以模拟不会rebuild的情况
-        PageCacheDebugLock pageCacheLock = new PageCacheDebugLock(10000, 20);
+        PageCacheDebugLockFactory pageCacheLock = new PageCacheDebugLockFactory(10000, 20);
 
         pageCacheLock.initialize();
 
@@ -129,7 +129,7 @@ public class PageCacheLockTest {
     @Test
     public void testWithRebuild() throws InterruptedException {
 
-        PageCacheDebugLock pageCacheLock = new PageCacheDebugLock(5, 100);
+        PageCacheDebugLockFactory pageCacheLock = new PageCacheDebugLockFactory(5, 100);
 
         pageCacheLock.initialize();
 

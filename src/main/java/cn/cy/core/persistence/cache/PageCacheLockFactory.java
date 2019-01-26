@@ -14,16 +14,16 @@ import cn.cy.common.ConcurrentFinalCache;
 /**
  * page cache lock
  * 使用暴力重构策略
- * 每过{@link PageCacheLock#rebuildInterval}时间, 进行一次暴力重构
+ * 每过{@link PageCacheLockFactory#rebuildInterval}时间, 进行一次暴力重构
  * <p>
- * 使用 {@link PageCacheLock#flag} 来模拟读写锁的功能
+ * 使用 {@link PageCacheLockFactory#flag} 来模拟读写锁的功能
  */
-public class PageCacheLock extends ConcurrentFinalCache<Integer, Lock> {
+public class PageCacheLockFactory extends ConcurrentFinalCache<Integer, Lock> {
 
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     /**
-     * flag == {@link PageCacheLock#REBUILDING} , 意味着重构线程正在执行
+     * flag == {@link PageCacheLockFactory#REBUILDING} , 意味着重构线程正在执行
      * flag > 0 , 意味着有线程在读取, 不可重构
      */
     protected AtomicInteger flag = new AtomicInteger(0);
@@ -42,11 +42,11 @@ public class PageCacheLock extends ConcurrentFinalCache<Integer, Lock> {
      */
     public Integer round = 0;
 
-    public PageCacheLock() {
+    public PageCacheLockFactory() {
         this(300);
     }
 
-    public PageCacheLock(Integer rebuildInterval) {
+    public PageCacheLockFactory(Integer rebuildInterval) {
         this.rebuildInterval = rebuildInterval;
     }
 
