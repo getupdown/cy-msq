@@ -24,10 +24,9 @@ public class ConcurrentFinalCache<K, V> {
      *
      * @throws ExecutionException
      * @throws InterruptedException
-     * @throws IllegalArgumentException the value can't be overwritten here
      */
     public V compute(K key, Callable<V> computeFunction)
-            throws ExecutionException, InterruptedException, IllegalArgumentException {
+            throws ExecutionException, InterruptedException {
 
         FutureTask<V> task = futureMap.getOrDefault(key, null);
 
@@ -43,7 +42,7 @@ public class ConcurrentFinalCache<K, V> {
             wrappedFutureTask.run();
             return wrappedFutureTask.get();
         } else {
-            throw new IllegalArgumentException("  the value here can't be overwritten ! ");
+            return previous.get();
         }
     }
 }
