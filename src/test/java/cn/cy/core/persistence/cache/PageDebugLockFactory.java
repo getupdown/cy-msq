@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 附加一些debug信息
  */
-public class PageCacheDebugLockFactory extends PageCacheLockFactory {
+public class PageDebugLockFactory extends PageLockFactory {
 
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -52,7 +52,7 @@ public class PageCacheDebugLockFactory extends PageCacheLockFactory {
         return testRes.get(round);
     }
 
-    public PageCacheDebugLockFactory(Integer rebuildInterval, Integer maxRound) {
+    public PageDebugLockFactory(Integer rebuildInterval, Integer maxRound) {
         super(rebuildInterval);
         this.maxRound = maxRound;
 
