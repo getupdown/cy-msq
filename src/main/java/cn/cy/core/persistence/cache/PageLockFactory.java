@@ -1,10 +1,10 @@
 package cn.cy.core.persistence.cache;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,29 +97,26 @@ public class PageLockFactory extends ConcurrentFinalCache<Integer, Lock> {
     }
 
     /**
-     * @param key           key
-     * @param buildFunction the function to generate the value
+     * 给外部调用一把锁, 注意使用完之后归还, {@link PageLockFactory#returnLock(Lock)}
+     *
+     * @param key
      *
      * @return
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
-    @Override
-    public Lock compute(Integer key, Callable<Lock> buildFunction) throws ExecutionException, InterruptedException {
-
+    public Lock offerLock(Integer key) throws ExecutionException, InterruptedException {
         // cas
         while (flag.updateAndGet(prev -> prev >= 0 ? prev + 1 : prev) < 0) {
         }
 
-        Lock res = super.compute(key, buildFunction);
+        return compute(key, ReentrantLock::new);
+    }
 
-        // 这个锁的临界区必须置于此
-        // 否则中间被rebuild打断, 可能造成前后拿的锁不一致
-        // todo 还没写完 这里还要改
-
+    /**
+     * 归还锁
+     *
+     * @param lock
+     */
+    public void returnLock(Lock lock) {
         flag.decrementAndGet();
-
-        return res;
     }
 }

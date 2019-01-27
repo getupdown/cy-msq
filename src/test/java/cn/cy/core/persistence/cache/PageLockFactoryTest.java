@@ -55,7 +55,7 @@ public class PageLockFactoryTest {
     @Test
     public void testRunnable() throws InterruptedException {
 
-        PageDebugLockFactory pageCacheLock = new PageDebugLockFactory(20, Integer.MAX_VALUE);
+        PageDebugLockFactory pageCacheLock = new PageDebugLockFactory(20, 10);
 
         // 启动8个线程
         // 验证可行性

@@ -27,7 +27,7 @@ public class ConcurrentFinalCache<K extends Comparable, V> {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public V compute(K key, Callable<V> buildFunction)
+     protected V compute(K key, Callable<V> buildFunction)
             throws ExecutionException, InterruptedException {
 
         FutureTask<V> task = futureMap.getOrDefault(key, null);
