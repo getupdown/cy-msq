@@ -3,12 +3,10 @@ package cn.cy.core.persistence;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +14,7 @@ import org.junit.Test;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Bytes;
 
-public class MappedFileTest {
+public class MappedFileTest extends BasePersistenceTest {
 
     private static Path path;
 
@@ -29,16 +27,8 @@ public class MappedFileTest {
 
     @Before
     public void before() throws IOException, URISyntaxException {
-
-        path = Files.createTempFile(Paths.get(getClass().getClassLoader().getResource("testdata/persistence")
-                .toURI()), "test", "mappedFile_1.log");
-
+        createFile();
         mappedFile = new MappedFile(path);
-    }
-
-    @After
-    public void after() throws IOException {
-        Files.delete(path);
     }
 
     private String readFileAsString(int size) throws IOException {
@@ -92,4 +82,5 @@ public class MappedFileTest {
 
         assertFileContent(s1, writtenStr);
     }
+
 }
