@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel;
  */
 public interface PersistenceProcessor {
 
-    void appendPersistent(Byte[] target) throws IOException;
+    void append(Byte[] target, boolean forceFlush) throws IOException;
 
     Byte[] read(long start, long size) throws IOException;
 

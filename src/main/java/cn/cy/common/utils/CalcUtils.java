@@ -3,7 +3,7 @@ package cn.cy.common.utils;
 public class CalcUtils {
 
     /**
-     * 向上调整至倍数
+     * 向上调整至倍数,若已经是倍数,还会再向上调整
      *
      * @param pre
      * @param divisor
@@ -15,7 +15,7 @@ public class CalcUtils {
     }
 
     /**
-     * 向下调整至倍数
+     * 向下调整至倍数,若已经是倍数则不再向下调整
      *
      * @param pre
      * @param divisor

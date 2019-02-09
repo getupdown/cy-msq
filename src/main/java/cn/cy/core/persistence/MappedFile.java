@@ -20,7 +20,7 @@ import cn.cy.common.utils.CalcUtils;
  * 为上层暴露操作文件的接口
  * 加锁不在这里做
  */
-public class MappedFile {
+public class MappedFile implements PersistenceProcessor {
 
     private FileChannel fileChannel;
 
@@ -227,5 +227,10 @@ public class MappedFile {
 
     private void updateCache(Long index, MappedByteBuffer content) {
         cachePages.put(index, content);
+    }
+
+    @Override
+    public FileChannel getFileChannel() throws IOException {
+        return fileChannel;
     }
 }
