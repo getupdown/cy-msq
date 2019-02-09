@@ -156,8 +156,7 @@ public class MappedFile {
                 readLength = remain;
             }
 
-            // read
-            res.addAll(readFromBufferAtIndex(readOnlyBuffer, readOffset, readLength));
+            res.addAll(readFromBufferAtIndex(readOnlyBuffer, readOffset % PAGE_SIZE, readLength));
 
             remain -= readLength;
             pageHeadOffset += PAGE_SIZE;
@@ -182,8 +181,8 @@ public class MappedFile {
         assert (int) startIndex == startIndex;
         assert (int) length == length;
 
-        buffer.position((int) startIndex);
         buffer.limit((int) startIndex + (int) length);
+        buffer.position((int) startIndex);
 
         List<Byte> list = Lists.newArrayList();
 

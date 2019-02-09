@@ -3,9 +3,9 @@ package cn.cy.core.persistence;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,8 +15,6 @@ import com.google.common.base.Strings;
 import com.google.common.primitives.Bytes;
 
 public class MappedFileTest extends BasePersistenceTest {
-
-    private static Path path;
 
     private MappedFile mappedFile;
 
@@ -83,4 +81,43 @@ public class MappedFileTest extends BasePersistenceTest {
         assertFileContent(s1, writtenStr);
     }
 
+    private Byte[] writeRandomBytes() throws IOException {
+        int length = 10000;
+
+        byte[] bytes = new byte[length];
+
+        Random random = new Random();
+
+        random.nextBytes(bytes);
+
+        Byte[] sb = Bytes.asList(bytes).toArray(new Byte[0]);
+
+        mappedFile.append(sb, true);
+
+        return sb;
+    }
+
+    /**
+     * 测试读方法
+     */
+    @Test
+    public void testRead() throws IOException {
+        Byte[] res = writeRandomBytes();
+
+        int sampleCnt = 100000;
+
+        for (int i = 0; i < sampleCnt; i++) {
+            Random random = new Random();
+
+            int start = random.nextInt(9999);
+
+            int length = Math.min(1000, 10000 - start);
+
+            Byte[] cmp1 = mappedFile.read(start, length);
+
+            Byte[] cmp2 = Arrays.copyOfRange(res, start, start + length);
+
+            Assert.assertArrayEquals(cmp1, cmp2);
+        }
+    }
 }
