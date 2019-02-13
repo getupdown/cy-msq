@@ -14,6 +14,8 @@ import org.junit.Test;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Bytes;
 
+import cn.cy.core.persistence.file.MappedFile;
+
 public class MappedFileTest extends BasePersistenceTest {
 
     private MappedFile mappedFile;
@@ -58,7 +60,7 @@ public class MappedFileTest extends BasePersistenceTest {
 
         for (int i = 0; i < repeatTime; i++) {
             try {
-                mappedFile.append(Bytes.asList(s.getBytes()).toArray(new Byte[0]), true);
+                mappedFile.append(s.getBytes(), true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -74,14 +76,14 @@ public class MappedFileTest extends BasePersistenceTest {
         // 一次性大量
         writtenStr = Strings.repeat("qweasdzxcasdqweasdzxcasdqweasdzxc", 100000);
 
-        mappedFile.append(Bytes.asList(writtenStr.getBytes()).toArray(new Byte[0]), true);
+        mappedFile.append(writtenStr.getBytes(), true);
 
         String s1 = readFileAsString(writtenStr.length());
 
         assertFileContent(s1, writtenStr);
     }
 
-    private Byte[] writeRandomBytes() throws IOException {
+    private byte[] writeRandomBytes() throws IOException {
         int length = 10000;
 
         byte[] bytes = new byte[length];
@@ -90,11 +92,9 @@ public class MappedFileTest extends BasePersistenceTest {
 
         random.nextBytes(bytes);
 
-        Byte[] sb = Bytes.asList(bytes).toArray(new Byte[0]);
+        mappedFile.append(bytes, true);
 
-        mappedFile.append(sb, true);
-
-        return sb;
+        return bytes;
     }
 
     /**
@@ -102,7 +102,7 @@ public class MappedFileTest extends BasePersistenceTest {
      */
     @Test
     public void testRead() throws IOException {
-        Byte[] res = writeRandomBytes();
+        byte[] res = writeRandomBytes();
 
         int sampleCnt = 100000;
 
@@ -115,7 +115,7 @@ public class MappedFileTest extends BasePersistenceTest {
 
             Byte[] cmp1 = mappedFile.read(start, length);
 
-            Byte[] cmp2 = Arrays.copyOfRange(res, start, start + length);
+            Byte[] cmp2 = Arrays.copyOfRange(Bytes.asList(res).toArray(new Byte[0]), start, start + length);
 
             Assert.assertArrayEquals(cmp1, cmp2);
         }

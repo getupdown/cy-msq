@@ -1,8 +1,9 @@
-package cn.cy.core.persistence;
+package cn.cy.core.persistence.file;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -12,6 +13,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 
 import cn.cy.common.utils.CalcUtils;
+import cn.cy.core.persistence.PersistenceProcessor;
 
 /**
  * 描述单个文件的对象
@@ -42,12 +44,7 @@ public class MappedFile implements PersistenceProcessor {
     private long tailOffset = 0L;
 
     /**
-     * {@link MappedFile#appendBuffer} 的头偏移量
-     */
-    private long headOffset = 0L;
-
-    /**
-     * 每一页的大小, 降低锁粒度
+     * 每一页的大小
      */
     private static final int PAGE_SIZE = 8192;
 
@@ -67,6 +64,9 @@ public class MappedFile implements PersistenceProcessor {
 
     private void ensureOpen() throws IOException {
         if (fileChannel == null) {
+            if (!Files.exists(path)) {
+                Files.createFile(path);
+            }
             fileChannel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.READ);
             appendBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, tailOffset, PAGE_SIZE * 10);
         }
@@ -75,11 +75,10 @@ public class MappedFile implements PersistenceProcessor {
     /**
      * append the bytes to the file
      * must be called in the sync field
-     *
-     * @param bytes the bytes array to be written to the file
+     *  @param bytes the bytes array to be written to the file
      * @param force indicates that if the content will be written to the file immediately
      */
-    public void append(Byte[] bytes, boolean force) throws IOException {
+    public void append(byte[] bytes, boolean force) throws IOException {
 
         ensureOpen();
 
@@ -112,7 +111,6 @@ public class MappedFile implements PersistenceProcessor {
      * @throws IOException
      */
     private MappedByteBuffer allocateAppendableBuffer(long startOffset, long length) throws IOException {
-        headOffset = tailOffset;
         return fileChannel.map(FileChannel.MapMode.READ_WRITE, startOffset, length);
     }
 
@@ -231,6 +229,7 @@ public class MappedFile implements PersistenceProcessor {
 
     @Override
     public FileChannel getFileChannel() throws IOException {
+        ensureOpen();
         return fileChannel;
     }
 }
