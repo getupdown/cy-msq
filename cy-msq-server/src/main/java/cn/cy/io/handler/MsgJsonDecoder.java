@@ -4,10 +4,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.cy.io.vo.BaseInfo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
-import cn.cy.io.vo.BaseInfo;
 import cn.cy.io.vo.RequestType;
 import cn.cy.io.vo.request.CommitRequest;
 import io.netty.buffer.ByteBuf;
