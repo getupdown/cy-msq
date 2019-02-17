@@ -20,22 +20,20 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class MessageFileTest {
+public class ConcurrentAppendableFileTest {
 
     private Path path;
 
-    private volatile MessageFile messageFile;
+    private volatile ConcurrentAppendableFile concurrentAppendableFile;
 
     @Before
     public void init() {
         path = Paths.get("message_file_1.msg");
-        messageFile = new MessageFile(path);
+        concurrentAppendableFile = new ConcurrentAppendableFile(path);
     }
 
     @After
@@ -68,7 +66,7 @@ public class MessageFileTest {
 
         for (int i = 0; i < 100; i++) {
             String x = Strings.repeat("zxcvasdfqwer", Math.abs(new Random().nextInt()) % 10000 + 1);
-            messageFile.append(x);
+            concurrentAppendableFile.append(x);
             sb.append(x);
         }
 
@@ -90,7 +88,7 @@ public class MessageFileTest {
         int taskCnt = 1000;
 
         for (int i = 0; i < taskCnt; i++) {
-            Future<String> future = executor.submit(new Appender(messageFile, object, pat));
+            Future<String> future = executor.submit(new Appender(concurrentAppendableFile, object, pat));
 
             futures.add(future);
         }
@@ -129,14 +127,14 @@ public class MessageFileTest {
 
     private static class Appender implements Callable<String> {
 
-        private MessageFile messageFile;
+        private ConcurrentAppendableFile concurrentAppendableFile;
 
         private final Object sync;
 
         private final String pattern;
 
-        public Appender(MessageFile messageFile, Object sync, String pattern) {
-            this.messageFile = messageFile;
+        public Appender(ConcurrentAppendableFile concurrentAppendableFile, Object sync, String pattern) {
+            this.concurrentAppendableFile = concurrentAppendableFile;
             this.sync = sync;
             this.pattern = pattern;
         }
@@ -145,7 +143,7 @@ public class MessageFileTest {
         public String call() {
             String x = Strings.repeat(pattern, Math.abs(new Random().nextInt()) % 10000 + 1) + "\n";
             try {
-                messageFile.append(x);
+                concurrentAppendableFile.append(x);
             } catch (IOException e) {
                 e.printStackTrace();
             }

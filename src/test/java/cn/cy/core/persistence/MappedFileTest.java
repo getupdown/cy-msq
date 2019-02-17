@@ -113,7 +113,7 @@ public class MappedFileTest extends BasePersistenceTest {
 
             int length = Math.min(1000, 10000 - start);
 
-            Byte[] cmp1 = mappedFile.read(start, length);
+            Byte[] cmp1 = Bytes.asList(mappedFile.read(start, length)).toArray(new Byte[0]);
 
             Byte[] cmp2 = Arrays.copyOfRange(Bytes.asList(res).toArray(new Byte[0]), start, start + length);
 

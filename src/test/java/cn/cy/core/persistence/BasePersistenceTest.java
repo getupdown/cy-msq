@@ -8,6 +8,9 @@ import java.nio.file.Paths;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+
+import com.alibaba.fastjson.JSON;
 
 public class BasePersistenceTest {
     protected Path path;
@@ -25,5 +28,10 @@ public class BasePersistenceTest {
     protected void createFile() throws URISyntaxException, IOException {
         path = Files.createTempFile(Paths.get(getClass().getClassLoader().getResource("testdata/persistence")
                 .toURI()), "test", "mappedFile_1.log");
+    }
+
+    @Test
+    public void name() {
+
     }
 }

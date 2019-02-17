@@ -10,7 +10,7 @@ public interface PersistenceProcessor {
 
     void append(byte[] target, boolean forceFlush) throws IOException;
 
-    Byte[] read(long start, long size) throws IOException;
+    byte[] read(long start, long size) throws IOException;
 
     FileChannel getFileChannel() throws IOException;
 }

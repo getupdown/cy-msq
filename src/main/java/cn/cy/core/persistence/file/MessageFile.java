@@ -2,97 +2,38 @@ package cn.cy.core.persistence.file;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.locks.Lock;
 
-import com.google.common.primitives.Chars;
-
-import cn.cy.core.persistence.cache.PageLockFactory;
+import cn.cy.core.persistence.index.ByteIndexBySeq;
 
 /**
- * 描述存储着{@link cn.cy.core.msg.QueuedMessage}的文件
+ * {@link cn.cy.core.msg.QueuedMessage}
  * <p>
- * 文件格式：
- * 每一条消息以"行"的形式存储，即一行一条消息
+ * 这里是以"行"为单位存储的每一条消息实体
  */
-public class MessageFile implements Appendable {
+public class MessageFile implements WriteByAppend {
 
-    /**
-     * 文件路径
-     */
-    private Path path;
+    private Integer id;
 
-    /**
-     * 底层对应的真实文件
-     */
-    private MappedFile mappedFile;
+    private ConcurrentAppendableFile concurrentAppendableFile;
 
-    /**
-     * 分页锁
-     */
-    private final PageLockFactory pageLockFactory;
+    private final Path path;
 
-    /**
-     * 用作追加文件的写锁
-     */
-    private Integer APPEND_LOCK = Integer.MAX_VALUE;
+    private ByteIndexBySeq byteIndexBySeq;
 
-    private MessageFile() {
-        pageLockFactory = new PageLockFactory();
-    }
-
-    public MessageFile(Path path) {
-        this();
+    public MessageFile(Path path, ByteIndexBySeq byteIndexBySeq) {
         this.path = path;
-        mappedFile = new MappedFile(path);
+        this.byteIndexBySeq = byteIndexBySeq;
+        concurrentAppendableFile = new ConcurrentAppendableFile(this.path);
     }
 
-    private Lock offerLock(Integer key) {
-        try {
-            return pageLockFactory.offerLock(key);
-        } catch (ExecutionException | InterruptedException e) {
-            // ignore
-        }
-        return null;
-    }
-
-    @Override
-    public Appendable append(CharSequence csq) throws IOException {
-
-        Lock lock = offerLock(APPEND_LOCK);
-        assert lock != null;
-        try {
-            lock.lock();
-            mappedFile.append(csq.toString().getBytes(), false);
-        } finally {
-            lock.unlock();
-        }
-        return this;
+    // 读取这个里面的第几条消息
+    public String readBySeq(Long seq) throws IOException {
+        return concurrentAppendableFile
+                .readFromBytes(byteIndexBySeq.getOffsetBySeq(seq), byteIndexBySeq.getLengthBySeq(seq));
     }
 
     @Override
-    public Appendable append(CharSequence csq, int start, int end) throws IOException {
-        Lock lock = offerLock(APPEND_LOCK);
-        assert lock != null;
-        try {
-            lock.lock();
-            mappedFile.append(csq.subSequence(start, end).toString().getBytes(), false);
-        } finally {
-            lock.unlock();
-        }
-        return this;
-    }
-
-    @Override
-    public Appendable append(char c) throws IOException {
-        Lock lock = offerLock(APPEND_LOCK);
-        assert lock != null;
-        try {
-            lock.lock();
-            mappedFile.append(Chars.toByteArray(c), false);
-        } finally {
-            lock.unlock();
-        }
-        return this;
+    public void append(CharSequence csq) throws IOException {
+        concurrentAppendableFile.append(csq);
     }
 }

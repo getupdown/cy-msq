@@ -11,6 +11,7 @@ import java.util.List;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Bytes;
 
 import cn.cy.common.utils.CalcUtils;
 import cn.cy.core.persistence.PersistenceProcessor;
@@ -132,7 +133,7 @@ public class MappedFile implements PersistenceProcessor {
      * read the file
      * must be called in the sync field
      */
-    public Byte[] read(final long offset, final long length) throws IOException {
+    public byte[] read(final long offset, final long length) throws IOException {
         ensureOpen();
 
         // 当前读的页的头offset
@@ -162,7 +163,7 @@ public class MappedFile implements PersistenceProcessor {
 
         }
 
-        return res.toArray(new Byte[0]);
+        return Bytes.toArray(res);
     }
 
     /**
