@@ -3,7 +3,8 @@ package cn.cy.core.persistence.file;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import cn.cy.core.persistence.index.ByteIndexBySeq;
+import cn.cy.core.queue.index.ByteIndexBySeq;
+import cn.cy.core.queue.index.OffsetIndex;
 
 /**
  * {@link cn.cy.core.msg.QueuedMessage}
@@ -28,8 +29,10 @@ public class MessageFile implements WriteByAppend {
 
     // 读取这个里面的第几条消息
     public String readBySeq(Long seq) throws IOException {
+        OffsetIndex offsetIndex = byteIndexBySeq.getIndexBySeq(seq);
+
         return concurrentAppendableFile
-                .readFromBytes(byteIndexBySeq.getOffsetBySeq(seq), byteIndexBySeq.getLengthBySeq(seq));
+                .readFromBytes(offsetIndex.getByteOffset(), offsetIndex.getLength());
     }
 
     @Override

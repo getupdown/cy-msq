@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 可以并行读写的文件
  */
-class ConcurrentAppendableFile implements WriteByAppend {
+public class ConcurrentAppendableFile implements WriteByAppend {
 
     /**
      * 文件路径
@@ -23,14 +23,9 @@ class ConcurrentAppendableFile implements WriteByAppend {
     /**
      * 写锁
      */
-    private final Lock appendLock;
-
-    private ConcurrentAppendableFile() {
-        appendLock = new ReentrantLock();
-    }
+    private final Lock appendLock = new ReentrantLock();
 
     public ConcurrentAppendableFile(Path path) {
-        this();
         this.path = path;
         mappedFile = new MappedFile(path);
     }
