@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -119,5 +120,18 @@ public class MappedFileTest extends BasePersistenceTest {
 
             Assert.assertArrayEquals(cmp1, cmp2);
         }
+    }
+
+    /**
+     * 测试文件的size返回是否正确
+     */
+    @Test
+    public void testSize() throws IOException {
+        String input = "abcdefg";
+        mappedFile.append(input.getBytes(), false);
+
+        mappedFile = new MappedFile(path);
+
+        Assert.assertEquals(mappedFile.getFileChannel().size(), 8192);
     }
 }

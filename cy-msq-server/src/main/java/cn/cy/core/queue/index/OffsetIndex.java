@@ -6,6 +6,7 @@ public class OffsetIndex {
     private Long byteOffset;
     private Long length;
     private Long msgOffset;
+    private Integer fileId;
 
     public String getCheckSum() {
         return checkSum;
@@ -19,6 +20,10 @@ public class OffsetIndex {
         return byteOffset;
     }
 
+    public void setByteOffset(Long byteOffset) {
+        this.byteOffset = byteOffset;
+    }
+
     public Long getLength() {
         return length;
     }
@@ -29,5 +34,17 @@ public class OffsetIndex {
 
     public Long getMsgOffset() {
         return msgOffset;
+    }
+
+    public void setMsgOffset(Long msgOffset) {
+        this.msgOffset = msgOffset;
+    }
+
+    public Integer getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Integer fileId) {
+        this.fileId = fileId;
     }
 }

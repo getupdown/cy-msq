@@ -14,6 +14,8 @@ public class QueuedMessage {
     // 内容
     private String content;
 
+    private String checkSum;
+
     public String getQid() {
         return qid;
     }
@@ -36,5 +38,13 @@ public class QueuedMessage {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getCheckSum() {
+        return checkSum;
+    }
+
+    public void setCheckSum(String checkSum) {
+        this.checkSum = checkSum;
     }
 }

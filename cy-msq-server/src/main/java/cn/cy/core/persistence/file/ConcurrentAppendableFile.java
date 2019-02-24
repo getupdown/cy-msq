@@ -31,11 +31,11 @@ public class ConcurrentAppendableFile implements WriteByAppend {
     }
 
     @Override
-    public void append(CharSequence csq) throws IOException {
+    public AppendInfo append(CharSequence csq) throws IOException {
         Lock lock = appendLock;
         try {
             lock.lock();
-            mappedFile.append(csq.toString().getBytes(), false);
+            return mappedFile.append(csq.toString().getBytes(), false);
         } finally {
             lock.unlock();
         }

@@ -1,7 +1,7 @@
 package cn.cy.core.queue;
 
 import cn.cy.core.msg.QueuedMessage;
-import cn.cy.core.persistence.file.MessageFile;
+import cn.cy.core.persistence.file.msg.MessageFile;
 
 /**
  * 可持久化的消息队列

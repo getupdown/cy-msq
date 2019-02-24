@@ -42,7 +42,7 @@ public class MappedFile implements PersistenceProcessor {
     /**
      * 尾部偏移量大小
      */
-    private long tailOffset = 0L;
+    private long tailOffset;
 
     /**
      * 每一页的大小
@@ -69,19 +69,30 @@ public class MappedFile implements PersistenceProcessor {
                 Files.createFile(path);
             }
             fileChannel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.READ);
-            appendBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, tailOffset, PAGE_SIZE * 10);
+            tailOffset = fileChannel.size();
+        }
+    }
+
+    private void ensureAppendBuffer() throws IOException {
+        if (appendBuffer == null) {
+            appendBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, tailOffset, PAGE_SIZE);
         }
     }
 
     /**
      * append the bytes to the file
      * must be called in the sync field
-     *  @param bytes the bytes array to be written to the file
+     *
+     * @param bytes the bytes array to be written to the file
      * @param force indicates that if the content will be written to the file immediately
      */
-    public void append(byte[] bytes, boolean force) throws IOException {
+    public AppendInfo append(byte[] bytes, boolean force) throws IOException {
 
         ensureOpen();
+
+        ensureAppendBuffer();
+
+        AppendInfo appendInfo = new AppendInfo(tailOffset, (long) bytes.length);
 
         // 预估大小
         if (appendBuffer.position() + bytes.length > appendBuffer.capacity()) {
@@ -99,6 +110,8 @@ public class MappedFile implements PersistenceProcessor {
         if (force) {
             appendBuffer.force();
         }
+
+        return appendInfo;
     }
 
     /**
@@ -229,8 +242,10 @@ public class MappedFile implements PersistenceProcessor {
     }
 
     @Override
-    public FileChannel getFileChannel() throws IOException {
-        ensureOpen();
-        return fileChannel;
+    public void close() throws IOException {
+        // 由于预开辟空间,尽量做到把文件大小弄回去
+
+        // todo
+        fileChannel.close();
     }
 }

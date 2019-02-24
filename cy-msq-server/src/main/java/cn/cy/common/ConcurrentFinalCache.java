@@ -1,6 +1,10 @@
 package cn.cy.common;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * <p>
@@ -9,12 +13,12 @@ import java.util.concurrent.*;
  * Thread a: get(key) == null   ->   new value   ->   set it
  * Thread b:                    get(key) == null   ->   new value  ->  set it
  */
-public class ConcurrentFinalCache<K extends Comparable, V> {
+public class ConcurrentFinalCache<K, V> {
 
     protected ConcurrentMap<K, FutureTask<V>> futureMap = new ConcurrentHashMap<>();
 
     /**
-     * @param key             key
+     * @param key           key
      * @param buildFunction the function to generate the value
      *
      * @return value
@@ -22,7 +26,7 @@ public class ConcurrentFinalCache<K extends Comparable, V> {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-     protected V compute(K key, Callable<V> buildFunction)
+    public V compute(K key, Callable<V> buildFunction)
             throws ExecutionException, InterruptedException {
 
         FutureTask<V> task = futureMap.getOrDefault(key, null);
