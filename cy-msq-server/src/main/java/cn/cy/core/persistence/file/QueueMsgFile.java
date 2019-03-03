@@ -36,4 +36,11 @@ public interface QueueMsgFile {
      * @throws IOException
      */
     String randomRead(Long offset, Long length) throws IOException;
+
+    /**
+     * 获取文件内的消息个数
+     *
+     * @return
+     */
+    Long getMsgCnt();
 }

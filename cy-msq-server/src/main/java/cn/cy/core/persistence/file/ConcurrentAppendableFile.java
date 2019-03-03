@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import cn.cy.core.persistence.file.msg.MappedFileInfo;
+
 /**
  * 可以并行读写的文件
  */
@@ -20,6 +22,8 @@ public class ConcurrentAppendableFile implements WriteByAppend {
      */
     private MappedFile mappedFile;
 
+    private MappedFileInfo mappedFileInfo;
+
     /**
      * 写锁
      */
@@ -28,6 +32,14 @@ public class ConcurrentAppendableFile implements WriteByAppend {
     public ConcurrentAppendableFile(Path path) {
         this.path = path;
         mappedFile = new MappedFile(path);
+        this.mappedFileInfo = new MappedFileInfo();
+    }
+
+    public ConcurrentAppendableFile(Path path, Long tailOffset) {
+        this.path = path;
+        this.mappedFileInfo = new MappedFileInfo();
+        mappedFileInfo.setNextWritableOffset(tailOffset);
+        mappedFile = new MappedFile(path, mappedFileInfo.getNextWritableOffset());
     }
 
     @Override
@@ -35,7 +47,11 @@ public class ConcurrentAppendableFile implements WriteByAppend {
         Lock lock = appendLock;
         try {
             lock.lock();
-            return mappedFile.append(csq.toString().getBytes(), false);
+            AppendInfo appendInfo = mappedFile.append(csq.toString().getBytes(), false);
+
+            updateMappedFileInfo(mappedFileInfo, appendInfo);
+
+            return appendInfo;
         } finally {
             lock.unlock();
         }
@@ -49,5 +65,13 @@ public class ConcurrentAppendableFile implements WriteByAppend {
      */
     public String readFromBytes(long byteOffset, long byteLength) throws IOException {
         return new String(mappedFile.read(byteOffset, byteLength));
+    }
+
+    private void updateMappedFileInfo(MappedFileInfo mappedFileInfo, AppendInfo appendInfo) {
+        mappedFileInfo.setNextWritableOffset(mappedFileInfo.getNextWritableOffset() + appendInfo.getLength());
+    }
+
+    public Long getNextWritableOffset() {
+        return mappedFileInfo.getNextWritableOffset();
     }
 }

@@ -56,6 +56,13 @@ public class MappedFile implements PersistenceProcessor {
     public MappedFile(Path path) {
         this();
         this.path = path;
+        this.tailOffset = 0L;
+    }
+
+    public MappedFile(Path path, Long tailOffset) {
+        this();
+        this.path = path;
+        this.tailOffset = tailOffset;
     }
 
     private void buildCache() {
@@ -69,7 +76,6 @@ public class MappedFile implements PersistenceProcessor {
                 Files.createFile(path);
             }
             fileChannel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.READ);
-            tailOffset = fileChannel.size();
         }
     }
 
@@ -243,9 +249,6 @@ public class MappedFile implements PersistenceProcessor {
 
     @Override
     public void close() throws IOException {
-        // 由于预开辟空间,尽量做到把文件大小弄回去
-
-        // todo
         fileChannel.close();
     }
 }

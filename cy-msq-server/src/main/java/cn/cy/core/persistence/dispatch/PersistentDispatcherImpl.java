@@ -11,12 +11,11 @@ import cn.cy.core.persistence.exception.PersistenceException;
 import cn.cy.core.persistence.file.QueueMsgFile;
 import cn.cy.core.persistence.file.msg.MessageFileFactory;
 import cn.cy.core.queue.QueueConfiguration;
-import cn.cy.core.queue.QueueState;
 
 /**
  * 读写分配实现
  */
-public class PersistentDispatcherImpl implements PersistentDispatcher {
+public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
 
     private static Logger LOGGER = LoggerFactory.getLogger(PersistentDispatcherImpl.class);
 
@@ -30,44 +29,23 @@ public class PersistentDispatcherImpl implements PersistentDispatcher {
 
     private final Object sync = new Object();
 
-    // 防止出现构建文件
+    // 防止出现重复构建文件
     private ConcurrentFinalCache<Integer, QueueMsgFile> buildFutureCache = new ConcurrentFinalCache<>();
 
     // 消息文件工厂
     private MessageFileFactory messageFileFactory;
 
     /**
-     * 根据当前队列状态, 分配消息写入哪个文件
-     *
-     * @param state
-     *
-     * @return
-     */
-    @Override
-    public QueueMsgFile dispatchWrite(QueueState state) {
-
-        synchronized(sync) {
-            return getWritable();
-        }
-
-    }
-
-    @Override
-    public QueueMsgFile dispatchRead(QueueState state) {
-        throw new IllegalArgumentException("not implemented");
-    }
-
-    /**
      * 移动写下标, 直到获得可以写的文件
      */
-    private QueueMsgFile getWritable() {
+    protected QueueMsgFile getWritable() {
 
-//        while (writeIndex < messageFiles.size()) {
-//            if (messageFiles.get(writeIndex).getMsgCntInFile() < queueConfiguration.MAX_MSG_PER_FILE) {
-//                return messageFiles.get(writeIndex);
-//            }
-//            writeIndex++;
-//        }
+        while (writeIndex < messageFiles.size()) {
+            if (messageFiles.get(writeIndex).getMsgCnt() < queueConfiguration.MAX_MSG_PER_FILE) {
+                return messageFiles.get(writeIndex);
+            }
+            writeIndex++;
+        }
 
         // 说明需要新建文件
         if (writeIndex == messageFiles.size()) {
@@ -91,5 +69,10 @@ public class PersistentDispatcherImpl implements PersistentDispatcher {
 
         // 不应执行到这里
         throw new IllegalArgumentException();
+    }
+
+    @Override
+    protected QueueMsgFile createNewMsgFile() {
+        return null;
     }
 }
