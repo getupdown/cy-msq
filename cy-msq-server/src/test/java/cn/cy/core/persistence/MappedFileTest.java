@@ -131,7 +131,5 @@ public class MappedFileTest extends BasePersistenceTest {
         mappedFile.append(input.getBytes(), false);
 
         mappedFile = new MappedFile(path);
-
-        Assert.assertEquals(mappedFile.getFileChannel().size(), 8192);
     }
 }

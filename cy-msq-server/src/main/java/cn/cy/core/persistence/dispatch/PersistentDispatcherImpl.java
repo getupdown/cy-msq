@@ -27,8 +27,6 @@ public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
     // 队列配置
     private QueueConfiguration queueConfiguration;
 
-    private final Object sync = new Object();
-
     // 防止出现重复构建文件
     private ConcurrentFinalCache<Integer, QueueMsgFile> buildFutureCache = new ConcurrentFinalCache<>();
 
@@ -52,9 +50,7 @@ public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
 
             QueueMsgFile file = null;
             try {
-                file = buildFutureCache.compute(writeIndex, () -> {
-                    return null;
-                });
+                file = buildFutureCache.compute(writeIndex, this::createNewMsgFile);
             } catch (ExecutionException e) {
                 LOGGER.error("ExecutionException found when build new file ");
                 throw new PersistenceException(e);
@@ -73,6 +69,6 @@ public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
 
     @Override
     protected QueueMsgFile createNewMsgFile() {
-        return null;
+        return messageFileFactory.buildNewMessageFile(writeIndex);
     }
 }
