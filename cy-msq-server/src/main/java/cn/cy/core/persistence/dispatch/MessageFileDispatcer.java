@@ -13,11 +13,11 @@ import cn.cy.core.persistence.file.msg.MessageFileFactory;
 import cn.cy.core.queue.QueueConfiguration;
 
 /**
- * 读写分配实现
+ * 消息文件读写分配实现
  */
-public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
+public class MessageFileDispatcer extends AbstractPersistentWriteDispatcher {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(PersistentDispatcherImpl.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(MessageFileDispatcer.class);
 
     private List<QueueMsgFile> messageFiles;
 
@@ -39,7 +39,7 @@ public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
     protected QueueMsgFile getWritable() {
 
         while (writeIndex < messageFiles.size()) {
-            if (messageFiles.get(writeIndex).getMsgCnt() < queueConfiguration.MAX_MSG_PER_FILE) {
+            if (messageFiles.get(writeIndex).getContentCnt() < queueConfiguration.MAX_MSG_PER_FILE) {
                 return messageFiles.get(writeIndex);
             }
             writeIndex++;
@@ -67,7 +67,6 @@ public class PersistentDispatcherImpl extends AbstractPersistentDispatcher {
         throw new IllegalArgumentException();
     }
 
-    @Override
     protected QueueMsgFile createNewMsgFile() {
         return messageFileFactory.buildNewMessageFile(writeIndex);
     }
