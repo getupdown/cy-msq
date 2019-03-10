@@ -8,9 +8,7 @@ public abstract class AbstractPersistentWriteDispatcher implements PersistentWri
 
     @Override
     public AppendOnlyShardedFile dispatchWrite() {
-        synchronized(sync) {
-            return getWritable();
-        }
+        return getWritable();
     }
 
     protected abstract AppendOnlyShardedFile getWritable();

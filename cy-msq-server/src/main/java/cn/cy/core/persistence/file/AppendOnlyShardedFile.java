@@ -10,7 +10,7 @@ import java.io.IOException;
 public interface AppendOnlyShardedFile {
 
     /**
-     * 把消息插入文件
+     * 把内容插入文件
      *
      * @param seq
      *

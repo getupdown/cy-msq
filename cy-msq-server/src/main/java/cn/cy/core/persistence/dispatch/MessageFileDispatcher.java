@@ -21,19 +21,19 @@ public class MessageFileDispatcher extends AbstractPersistentWriteDispatcher {
 
     private static Logger LOGGER = LoggerFactory.getLogger(MessageFileDispatcher.class);
 
-    private List<QueueMsgFile> messageFiles = Lists.newArrayList();
+    protected final List<QueueMsgFile> messageFiles;
 
     // 表示当前消息应该写入哪个文件
-    private int writeIndex;
+    protected volatile int writeIndex;
 
     // 队列配置
-    private QueueConfiguration queueConfiguration;
+    private final QueueConfiguration queueConfiguration;
 
     // 防止出现重复构建文件
-    private ConcurrentFinalCache<Integer, QueueMsgFile> buildFutureCache = new ConcurrentFinalCache<>();
+    private final ConcurrentFinalCache<Integer, QueueMsgFile> buildFutureCache = new ConcurrentFinalCache<>();
 
     // 消息文件工厂
-    private MessageFileFactory messageFileFactory;
+    private final MessageFileFactory messageFileFactory;
 
     public MessageFileDispatcher(QueueConfiguration queueConfiguration) {
         this(Lists.newArrayList(), queueConfiguration);
@@ -57,36 +57,32 @@ public class MessageFileDispatcher extends AbstractPersistentWriteDispatcher {
      */
     protected QueueMsgFile getWritable() {
 
-        while (writeIndex < messageFiles.size()) {
-            if (messageFiles.get(writeIndex).getContentCnt() < queueConfiguration.MAX_MSG_PER_FILE) {
-                return messageFiles.get(writeIndex);
+        synchronized(this) {
+            while (writeIndex < messageFiles.size()) {
+                if (messageFiles.get(writeIndex).getContentCnt() < queueConfiguration.MAX_MSG_PER_FILE) {
+                    return messageFiles.get(writeIndex);
+                }
+                writeIndex++;
             }
-            writeIndex++;
         }
 
         // 说明需要新建文件
-        if (writeIndex == messageFiles.size()) {
-
-            QueueMsgFile file = null;
-            try {
-                file = buildFutureCache.compute(writeIndex, () -> {
-                    QueueMsgFile newMsgFile = createNewMsgFile();
-                    messageFiles.add(newMsgFile);
-                    return newMsgFile;
-                });
-            } catch (ExecutionException e) {
-                LOGGER.error("ExecutionException found when build new file ");
-                throw new PersistenceException(e);
-            } catch (InterruptedException e) {
-                LOGGER.error("Interrupted found when build new file ");
-                throw new PersistenceException(e);
-            }
-
-            return file;
+        QueueMsgFile file = null;
+        try {
+            file = buildFutureCache.compute(writeIndex, () -> {
+                QueueMsgFile newMsgFile = createNewMsgFile();
+                messageFiles.add(newMsgFile);
+                return newMsgFile;
+            });
+        } catch (ExecutionException e) {
+            LOGGER.error("ExecutionException found when build new file ");
+            throw new PersistenceException(e);
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted found when build new file ");
+            throw new PersistenceException(e);
         }
 
-        // 不应执行到这里
-        throw new IllegalArgumentException();
+        return file;
     }
 
     protected QueueMsgFile createNewMsgFile() {

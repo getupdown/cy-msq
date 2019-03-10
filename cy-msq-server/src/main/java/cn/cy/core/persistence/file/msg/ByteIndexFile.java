@@ -1,6 +1,7 @@
 package cn.cy.core.persistence.file.msg;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.AppendOnlyShardedFile;
@@ -15,10 +16,18 @@ public class ByteIndexFile implements AppendOnlyShardedFile {
 
     private ConcurrentAppendableFile concurrentAppendableFile;
 
+    private Path path;
+
+    public ByteIndexFile(Integer id, Path path) {
+        this.id = id;
+        this.path = path;
+        concurrentAppendableFile = new ConcurrentAppendableFile(path);
+    }
+
     @Override
     public AppendInfoWithId append(CharSequence seq) throws IOException {
         return new AppendInfoWithId(concurrentAppendableFile.append(seq), id);
-    }
+}
 
     @Override
     public Integer getId() {

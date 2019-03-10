@@ -10,7 +10,11 @@ import cn.cy.core.queue.QueueConfiguration;
  */
 public class MessageFileFactory {
 
-    private QueueConfiguration queueConfiguration;
+    private final QueueConfiguration queueConfiguration;
+
+    public MessageFileFactory(QueueConfiguration queueConfiguration) {
+        this.queueConfiguration = queueConfiguration;
+    }
 
     public MessageFile buildNewMessageFile(Integer id) {
 
