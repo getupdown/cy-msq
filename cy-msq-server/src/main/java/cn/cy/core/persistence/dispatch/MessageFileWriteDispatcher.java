@@ -17,9 +17,9 @@ import cn.cy.core.queue.QueueConfiguration;
 /**
  * 消息文件读写分配实现
  */
-public class MessageFileDispatcher extends AbstractPersistentWriteDispatcher {
+public class MessageFileWriteDispatcher extends AbstractPersistentWriteDispatcher {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(MessageFileDispatcher.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(MessageFileWriteDispatcher.class);
 
     protected final List<QueueMsgFile> messageFiles;
 
@@ -35,17 +35,17 @@ public class MessageFileDispatcher extends AbstractPersistentWriteDispatcher {
     // 消息文件工厂
     private final MessageFileFactory messageFileFactory;
 
-    public MessageFileDispatcher(QueueConfiguration queueConfiguration) {
+    public MessageFileWriteDispatcher(QueueConfiguration queueConfiguration) {
         this(Lists.newArrayList(), queueConfiguration);
     }
 
-    public MessageFileDispatcher(List<QueueMsgFile> messageFiles,
-                                 QueueConfiguration queueConfiguration) {
+    public MessageFileWriteDispatcher(List<QueueMsgFile> messageFiles,
+                                      QueueConfiguration queueConfiguration) {
         this(messageFiles, 0, queueConfiguration);
     }
 
-    public MessageFileDispatcher(List<QueueMsgFile> messageFiles, int writeIndex,
-                                 QueueConfiguration queueConfiguration) {
+    public MessageFileWriteDispatcher(List<QueueMsgFile> messageFiles, int writeIndex,
+                                      QueueConfiguration queueConfiguration) {
         this.messageFiles = messageFiles;
         this.writeIndex = writeIndex;
         this.queueConfiguration = queueConfiguration;
@@ -59,6 +59,7 @@ public class MessageFileDispatcher extends AbstractPersistentWriteDispatcher {
 
         synchronized(this) {
             while (writeIndex < messageFiles.size()) {
+                // 虽然这里代码是这么写了, 但是经过测试发现, 还是有概率出现文件大小超过这个阈值的情况, 这点误差可以容忍
                 if (messageFiles.get(writeIndex).getContentCnt() < queueConfiguration.MAX_MSG_PER_FILE) {
                     return messageFiles.get(writeIndex);
                 }

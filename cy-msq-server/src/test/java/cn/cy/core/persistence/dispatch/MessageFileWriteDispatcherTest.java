@@ -15,10 +15,10 @@ import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.QueueMsgFile;
 import cn.cy.core.queue.QueueConfiguration;
 
-public class MessageFileDispatcherTest {
+public class MessageFileWriteDispatcherTest {
 
-    private MessageFileDispatcherDebug messageFileDispatcherDebug =
-            new MessageFileDispatcherDebug(new QueueConfiguration());
+    private MessageFileWriteDispatcherDebug messageFileDispatcherDebug =
+            new MessageFileWriteDispatcherDebug(new QueueConfiguration());
 
     static class MockMsgFile implements QueueMsgFile {
 
@@ -64,13 +64,13 @@ public class MessageFileDispatcherTest {
 
     private static class Worker implements Runnable {
 
-        private MessageFileDispatcherDebug messageFileDispatcherDebug;
+        private MessageFileWriteDispatcherDebug messageFileDispatcherDebug;
 
         private CountDownLatch countDownLatch;
 
         private Integer cnt;
 
-        public Worker(MessageFileDispatcherDebug messageFileDispatcherDebug, CountDownLatch countDownLatch,
+        public Worker(MessageFileWriteDispatcherDebug messageFileDispatcherDebug, CountDownLatch countDownLatch,
                       Integer cnt) {
             this.messageFileDispatcherDebug = messageFileDispatcherDebug;
             this.countDownLatch = countDownLatch;
