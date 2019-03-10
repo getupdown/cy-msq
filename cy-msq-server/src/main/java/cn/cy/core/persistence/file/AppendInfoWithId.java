@@ -1,12 +1,12 @@
 package cn.cy.core.persistence.file;
 
-public class QueueAppendInfo {
+public class AppendInfoWithId {
 
     private final AppendInfo appendInfo;
 
     private final Integer id;
 
-    public QueueAppendInfo(AppendInfo appendInfo, Integer id) {
+    public AppendInfoWithId(AppendInfo appendInfo, Integer id) {
         this.appendInfo = appendInfo;
         this.id = id;
     }

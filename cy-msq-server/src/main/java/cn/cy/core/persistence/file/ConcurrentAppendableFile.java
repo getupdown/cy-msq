@@ -39,7 +39,7 @@ public class ConcurrentAppendableFile implements WriteByAppend {
         this.path = path;
         this.mappedFileInfo = new MappedFileInfo();
         mappedFileInfo.setNextWritableOffset(tailOffset);
-        mappedFile = new MappedFile(path, mappedFileInfo.getNextWritableOffset());
+        mappedFile = new MappedFile(path, tailOffset);
     }
 
     @Override

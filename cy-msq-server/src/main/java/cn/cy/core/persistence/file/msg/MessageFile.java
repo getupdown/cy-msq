@@ -5,8 +5,8 @@ import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicLong;
 
 import cn.cy.core.persistence.file.AppendInfo;
+import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.ConcurrentAppendableFile;
-import cn.cy.core.persistence.file.QueueAppendInfo;
 import cn.cy.core.persistence.file.QueueMsgFile;
 
 /**
@@ -42,12 +42,12 @@ public class MessageFile implements QueueMsgFile {
     }
 
     @Override
-    public QueueAppendInfo append(CharSequence csq) throws IOException {
+    public AppendInfoWithId append(CharSequence csq) throws IOException {
         AppendInfo appendInfo = concurrentAppendableFile.append(csq);
 
         msgCnt.addAndGet(1);
 
-        return new QueueAppendInfo(appendInfo, id);
+        return new AppendInfoWithId(appendInfo, id);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MessageFile implements QueueMsgFile {
     }
 
     @Override
-    public Long getMsgCnt() {
+    public Long getContentCnt() {
         return msgCnt.get();
     }
 }

@@ -5,25 +5,7 @@ import java.io.IOException;
 /**
  * 消息队列部分的文件
  */
-public interface QueueMsgFile {
-
-    /**
-     * 队列里某个文件的id
-     *
-     * @return
-     */
-    Integer getId();
-
-    /**
-     * 把消息插入文件
-     *
-     * @param seq
-     *
-     * @return
-     *
-     * @throws IOException
-     */
-    QueueAppendInfo append(CharSequence seq) throws IOException;
+public interface QueueMsgFile extends AppendOnlyShardedFile {
 
     /**
      * 从文件里随机读消息
@@ -42,5 +24,5 @@ public interface QueueMsgFile {
      *
      * @return
      */
-    Long getMsgCnt();
+    Long getContentCnt();
 }

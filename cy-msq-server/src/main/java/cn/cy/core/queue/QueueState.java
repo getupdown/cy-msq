@@ -1,7 +1,5 @@
 package cn.cy.core.queue;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * 描述一个队列的状态
  */
@@ -12,10 +10,12 @@ public interface QueueState {
      *
      * @return
      */
-    AtomicLong getMaxOffset();
+    Long getMaxOffset();
 
     /**
-     * 获取sync对象
+     * 偏移量自增, 保证线程安全, 不重复
+     *
+     * @return 更新后的偏移量
      */
-    Object getSync();
+    Long increcOffset();
 }

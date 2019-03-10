@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 
 import cn.cy.core.msg.QueuedMessage;
-import cn.cy.core.persistence.dispatch.PersistentDispatcher;
+import cn.cy.core.persistence.dispatch.PersistentWriteDispatcher;
 import cn.cy.core.persistence.exception.PersistenceException;
-import cn.cy.core.persistence.file.QueueAppendInfo;
+import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.QueueMsgFile;
 import cn.cy.core.queue.QueueState;
 import cn.cy.core.queue.index.ByteIndexBySeq;
@@ -23,7 +23,7 @@ public class PersistenceManager {
 
     private static Logger LOGGER = LoggerFactory.getLogger(PersistenceManager.class);
 
-    private PersistentDispatcher persistentDispatcher;
+    private PersistentWriteDispatcher messageWriteDispatcher;
 
     private ByteIndexBySeq byteIndexBySeq;
 
@@ -37,13 +37,13 @@ public class PersistenceManager {
 
         String rawMsg = JSON.toJSONString(queuedMessage) + "\n";
 
-        Long nextOffset = state.getMaxOffset().addAndGet(1);
+        Long nextOffset = state.increcOffset();
 
-        QueueMsgFile queueMsgFile = persistentDispatcher.dispatchWrite(state);
+        QueueMsgFile queueMsgFile = (QueueMsgFile) messageWriteDispatcher.dispatchWrite();
 
         try {
 
-            QueueAppendInfo appendInfo = queueMsgFile.append(rawMsg);
+            AppendInfoWithId appendInfo = queueMsgFile.append(rawMsg);
 
             byteIndexBySeq.insertIndex(nextOffset, buildOffsetIndex(queuedMessage, appendInfo, nextOffset));
 
@@ -64,26 +64,26 @@ public class PersistenceManager {
      * 构造索引
      *
      * @param queuedMessage
-     * @param queueAppendInfo
+     * @param appendInfoWithId
      * @param nextOffset
      *
      * @return
      */
     private OffsetIndex buildOffsetIndex(QueuedMessage queuedMessage,
-                                         QueueAppendInfo queueAppendInfo,
+                                         AppendInfoWithId appendInfoWithId,
                                          Long nextOffset) {
 
         OffsetIndex offsetIndex = new OffsetIndex();
 
         offsetIndex.setCheckSum(queuedMessage.getCheckSum());
 
-        offsetIndex.setLength(queueAppendInfo.getAppendInfo().getLength());
+        offsetIndex.setLength(appendInfoWithId.getAppendInfo().getLength());
 
-        offsetIndex.setByteOffset(queueAppendInfo.getAppendInfo().getOffset());
+        offsetIndex.setByteOffset(appendInfoWithId.getAppendInfo().getOffset());
 
         offsetIndex.setMsgOffset(nextOffset);
 
-        offsetIndex.setFileId(queueAppendInfo.getId());
+        offsetIndex.setFileId(appendInfoWithId.getId());
 
         return offsetIndex;
     }
