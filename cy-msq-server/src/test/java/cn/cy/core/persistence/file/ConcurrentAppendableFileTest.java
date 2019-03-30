@@ -1,5 +1,6 @@
 package cn.cy.core.persistence.file;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -31,9 +32,9 @@ public class ConcurrentAppendableFileTest {
     private volatile ConcurrentAppendableFile concurrentAppendableFile;
 
     @Before
-    public void init() {
+    public void init() throws FileNotFoundException {
         path = Paths.get("message_file_1.msg");
-        concurrentAppendableFile = new ConcurrentAppendableFile(path);
+        concurrentAppendableFile = new ConcurrentAppendableFile(path, false);
     }
 
     @After
@@ -150,5 +151,11 @@ public class ConcurrentAppendableFileTest {
 
             return x;
         }
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void testFileNotFoundThrowException() throws FileNotFoundException {
+        path = Paths.get("message_file_1_xxx.msg");
+        concurrentAppendableFile = new ConcurrentAppendableFile(path, true);
     }
 }

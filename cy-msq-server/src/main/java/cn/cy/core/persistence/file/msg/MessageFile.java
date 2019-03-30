@@ -1,5 +1,6 @@
 package cn.cy.core.persistence.file.msg;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicLong;
@@ -24,14 +25,14 @@ public class MessageFile implements QueueMsgFile {
 
     private AtomicLong msgCnt = new AtomicLong(0);
 
-    public MessageFile(Path path, Integer id) {
+    public MessageFile(Path path, Integer id, boolean assertExist) throws FileNotFoundException {
         this.path = path;
         this.id = id;
-        concurrentAppendableFile = new ConcurrentAppendableFile(this.path);
+        concurrentAppendableFile = new ConcurrentAppendableFile(this.path, assertExist);
     }
 
-    public MessageFile(Path path, Integer id, Long msgCnt) {
-        this(path, id);
+    public MessageFile(Path path, Integer id, Long msgCnt, boolean assertExist) throws FileNotFoundException {
+        this(path, id, assertExist);
         this.msgCnt = new AtomicLong(msgCnt);
     }
 

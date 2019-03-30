@@ -1,9 +1,12 @@
 package cn.cy.core.persistence.dispatch;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import cn.cy.core.persistence.exception.FileNotFoundByIndexException;
 import cn.cy.core.persistence.file.RandomAccessible;
+import cn.cy.core.persistence.file.msg.MessageFileFactory;
 import cn.cy.core.queue.QueueConfiguration;
 import cn.cy.core.queue.index.OffsetIndex;
 
@@ -16,15 +19,23 @@ public class IndexReadDispatcherImpl implements IndexReadDispatcher {
 
     private QueueConfiguration queueConfiguration;
 
+    private MessageFileFactory messageFileFactory;
+
     @Override
-    public RandomAccessible index(OffsetIndex offsetIndex) {
+    public RandomAccessible index(OffsetIndex offsetIndex) throws FileNotFoundByIndexException {
 
         RandomAccessible accessible = idToFileMap.getOrDefault(offsetIndex.getFileId(), null);
 
         if (accessible == null) {
             // 首先试图去读取
+            try {
 
-            // 如果没有读取到, 抛出异常
+                accessible = messageFileFactory.loadMessageFileIntoMemory(offsetIndex.getFileId());
+
+            } catch (FileNotFoundException e) {
+                throw new FileNotFoundByIndexException(e);
+            }
+
         }
 
         return accessible;

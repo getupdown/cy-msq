@@ -5,4 +5,7 @@ package cn.cy.core.persistence.exception;
  */
 public class FileNotFoundByIndexException extends Exception {
 
+    public FileNotFoundByIndexException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -9,7 +9,6 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -29,7 +28,7 @@ public class MappedFileTest extends BasePersistenceTest {
     @Before
     public void before() throws IOException, URISyntaxException {
         createFile();
-        mappedFile = new MappedFile(path);
+        mappedFile = new MappedFile(path, false);
     }
 
     private String readFileAsString(int size) throws IOException {
@@ -130,6 +129,6 @@ public class MappedFileTest extends BasePersistenceTest {
         String input = "abcdefg";
         mappedFile.append(input.getBytes(), false);
 
-        mappedFile = new MappedFile(path);
+        mappedFile = new MappedFile(path, false);
     }
 }

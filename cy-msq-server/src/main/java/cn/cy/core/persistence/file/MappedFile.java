@@ -1,5 +1,6 @@
 package cn.cy.core.persistence.file;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -53,15 +54,23 @@ public class MappedFile implements PersistenceProcessor {
         buildCache();
     }
 
-    public MappedFile(Path path) {
+    private void assertFileExist(Path path) throws FileNotFoundException {
+        if (!Files.exists(path)) {
+            throw new FileNotFoundException(" path : " + path.toString() + " not found ! ");
+        }
+    }
+
+    public MappedFile(Path path, boolean assertExist) throws FileNotFoundException {
         this();
         this.path = path;
         this.tailOffset = 0L;
+        if (assertExist) {
+            assertFileExist(path);
+        }
     }
 
-    public MappedFile(Path path, Long tailOffset) {
-        this();
-        this.path = path;
+    public MappedFile(Path path, Long tailOffset, boolean assertExist) throws FileNotFoundException {
+        this(path, assertExist);
         this.tailOffset = tailOffset;
     }
 

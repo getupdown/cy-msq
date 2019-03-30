@@ -21,4 +21,5 @@ public class QueueConfiguration {
 
     public final Path msgRootPath = Paths.get("test");
 
+    public final String queueName = "test_queue";
 }

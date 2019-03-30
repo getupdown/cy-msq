@@ -87,6 +87,6 @@ public class MessageFileWriteDispatcher extends AbstractPersistentWriteDispatche
     }
 
     protected QueueMsgFile createNewMsgFile() {
-        return messageFileFactory.buildNewMessageFile(writeIndex);
+        return messageFileFactory.buildMessageFile(writeIndex);
     }
 }

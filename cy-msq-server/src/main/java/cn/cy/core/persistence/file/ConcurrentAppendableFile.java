@@ -1,5 +1,6 @@
 package cn.cy.core.persistence.file;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.locks.Lock;
@@ -29,17 +30,17 @@ public class ConcurrentAppendableFile implements WriteByAppend {
      */
     private final Lock appendLock = new ReentrantLock();
 
-    public ConcurrentAppendableFile(Path path) {
+    public ConcurrentAppendableFile(Path path, boolean assertExist) throws FileNotFoundException {
         this.path = path;
-        mappedFile = new MappedFile(path);
+        mappedFile = new MappedFile(path, assertExist);
         this.mappedFileInfo = new MappedFileInfo();
     }
 
-    public ConcurrentAppendableFile(Path path, Long tailOffset) {
+    public ConcurrentAppendableFile(Path path, Long tailOffset, boolean assertExist) throws FileNotFoundException {
         this.path = path;
         this.mappedFileInfo = new MappedFileInfo();
         mappedFileInfo.setNextWritableOffset(tailOffset);
-        mappedFile = new MappedFile(path, tailOffset);
+        mappedFile = new MappedFile(path, tailOffset, assertExist);
     }
 
     @Override
