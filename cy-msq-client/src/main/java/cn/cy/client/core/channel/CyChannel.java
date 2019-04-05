@@ -1,16 +1,26 @@
 package cn.cy.client.core.channel;
 
-import cn.cy.client.core.connection.Connection;
+import io.netty.channel.Channel;
 
-/**
- * 项目内的Channel接口
- *
- * --Todo 继续完善Channel需要的接口
- */
-public interface CyChannel {
+import java.util.concurrent.atomic.AtomicInteger;
 
-    Connection getConnection();
+public class CyChannel implements IChannel {
 
-    String getId();
+    private static final AtomicInteger ID_SEQ = new AtomicInteger(1);
+
+    private Channel channel;
+
+    public CyChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    @Override
+    public String getId() {
+        return this.channel.id().asShortText();
+    }
+
+    public void write(String msg) {
+        this.channel.writeAndFlush(msg);
+    }
 
 }

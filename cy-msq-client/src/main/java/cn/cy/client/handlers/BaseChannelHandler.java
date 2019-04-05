@@ -2,21 +2,16 @@ package cn.cy.client.handlers;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 
 @ChannelHandler.Sharable
-public class BaseChannelHandler extends ChannelInboundHandlerAdapter {
+public class BaseChannelHandler extends ChannelOutboundHandlerAdapter {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         String message = (String) msg;
-        ctx.fireChannelRead(message);
+        System.out.println(msg);
+        ctx.write(msg, promise);
     }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        super.channelReadComplete(ctx);
-    }
-
-
 }
