@@ -10,6 +10,13 @@ public class CommitRequest {
      */
     private String msg;
 
+    public CommitRequest() {
+    }
+
+    public CommitRequest(String msg) {
+        this.msg = msg;
+    }
+
     public String getMsg() {
         return msg;
     }

@@ -1,16 +1,22 @@
 package cn.cy.client.core.channel;
 
-import cn.cy.client.core.connection.Connection;
+import io.netty.channel.Channel;
 
-/**
- * 项目内的Channel接口
- *
- * --Todo 继续完善Channel需要的接口
- */
-public interface CyChannel {
+public class CyChannel implements IChannel {
 
-    Connection getConnection();
+    private Channel channel;
 
-    String getId();
+    public CyChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    @Override
+    public String getId() {
+        return this.channel.id().asShortText();
+    }
+
+    public void asyncWrite(String msg) {
+        this.channel.writeAndFlush(msg);
+    }
 
 }
