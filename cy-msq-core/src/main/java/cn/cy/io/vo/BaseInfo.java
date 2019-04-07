@@ -13,6 +13,16 @@ public class BaseInfo<T> {
 
     private T data;
 
+    public BaseInfo() {
+    }
+
+    public BaseInfo(Integer type, String desc, String requestId, T data) {
+        this.type = type;
+        this.desc = desc;
+        this.requestId = requestId;
+        this.data = data;
+    }
+
     public String getDesc() {
         return desc;
     }

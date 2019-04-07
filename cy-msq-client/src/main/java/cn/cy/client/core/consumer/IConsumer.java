@@ -1,4 +1,4 @@
 package cn.cy.client.core.consumer;
 
-public interface Consumer {
+public interface IConsumer {
 }

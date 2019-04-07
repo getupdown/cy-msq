@@ -24,21 +24,25 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class NettyClient implements Client {
 
+    public static final NettyClient INSTANCE = new NettyClient();
+
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private final String name;
+    private static final int CONNECTION_TIME_OUT = 30000;
+
+    static {
+        INSTANCE.start();
+    }
 
     private Bootstrap conn;
 
     //--Todo 创建一个连接配置类来包装连接相应的配置
-    private static final int CONNECTION_TIME_OUT = 30000;
 
     //连接所属的channel
     //--Todo 考虑竞争
     private Map<String, io.netty.channel.Channel> channels;
 
-    public NettyClient(String name) {
-        this.name = name;
+    private NettyClient() {
         this.channels = new ConcurrentHashMap<>();
     }
 
@@ -78,7 +82,7 @@ public class NettyClient implements Client {
     }
 
     public IChannel connect(String host, int port) throws InterruptedException {
-        ChannelFuture channelFuture = conn.connect().addListener(x -> {
+        ChannelFuture channelFuture = conn.connect(host, port).addListener(x -> {
             logger.info("Msq Client connect successfully");
         }).sync();
 

@@ -2,11 +2,7 @@ package cn.cy.client.core.channel;
 
 import io.netty.channel.Channel;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class CyChannel implements IChannel {
-
-    private static final AtomicInteger ID_SEQ = new AtomicInteger(1);
 
     private Channel channel;
 
@@ -19,7 +15,7 @@ public class CyChannel implements IChannel {
         return this.channel.id().asShortText();
     }
 
-    public void write(String msg) {
+    public void asyncWrite(String msg) {
         this.channel.writeAndFlush(msg);
     }
 

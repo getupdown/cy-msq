@@ -9,6 +9,6 @@ public interface IChannel {
 
     String getId();
 
-    void write(String msg);
+    void asyncWrite(String msg);
 
 }
