@@ -1,6 +1,7 @@
 package cn.cy.client.core.producer;
 
 import cn.cy.client.core.NettyClient;
+import cn.cy.client.core.channel.CyChannel;
 import cn.cy.client.core.channel.IChannel;
 import cn.cy.client.exceptions.ClientException;
 import cn.cy.client.exceptions.ConnectionFailException;
@@ -24,6 +25,13 @@ public class CyProducer implements IProducer {
 
     //执行发送任务的线程
     private ExecutorService ioThread = Executors.newSingleThreadExecutor();
+
+    public CyProducer(CyChannel channel) {
+        this.id = UUID.randomUUID().toString();
+        this.channel = channel;
+        this.sender = new Sender(this);
+        ioThread.submit(sender);
+    }
 
     public CyProducer(String host, int port) {
         try {
@@ -54,5 +62,9 @@ public class CyProducer implements IProducer {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    public Sender getSender() {
+        return sender;
     }
 }

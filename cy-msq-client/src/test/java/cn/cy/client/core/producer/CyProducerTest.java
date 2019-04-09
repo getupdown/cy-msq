@@ -1,15 +1,30 @@
 package cn.cy.client.core.producer;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import cn.cy.client.core.channel.CyChannel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class CyProducerTest {
+
+    private class TestCyChannel extends CyChannel {
+
+        private EmbeddedChannel channel;
+
+        public TestCyChannel(EmbeddedChannel channel) {
+            super(channel);
+            this.channel = channel;
+        }
+
+        @Override
+        public void asyncWrite(String msg) {
+            channel.writeInbound(msg);
+        }
+
+    }
 
     private class TestInBoundHandler extends ChannelInboundHandlerAdapter {
 
@@ -24,30 +39,18 @@ public class CyProducerTest {
 
     @Test
     public void send() throws InterruptedException {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        ServerBootstrap b = new ServerBootstrap(); // (2)
-        TestInBoundHandler testInBoundHandler = new TestInBoundHandler();
-        b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class) // (3)
-                .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(testInBoundHandler);
-                    }
-                })
-                .option(ChannelOption.SO_BACKLOG, 128)          // (5)
-                .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+        TestInBoundHandler inBoundHandler = new TestInBoundHandler();
+        EmbeddedChannel channel = new EmbeddedChannel(
+                inBoundHandler
+        );
+        IProducer producer = new CyProducer(new TestCyChannel(channel));
+        assertEquals(0, inBoundHandler.messageCount);
 
-        // Bind and start to accept incoming connections.
-        ChannelFuture f = b.bind(8089).sync(); // (7)
+        for (int i = 0; i < 100; i++) {
+            producer.send("hello");
+        }
 
-        // Wait until the server socket is closed.
-        // In this example, this does not happen, but you can do that to gracefully
-        // shut down your server.
-        IProducer producer = new CyProducer("127.0.0.1", 8089);
-        producer.send("hello");
-        Thread.sleep(1000);
-        assertEquals(1, testInBoundHandler.messageCount);
+        Thread.sleep(500);
+        assertEquals(100, inBoundHandler.messageCount);
     }
 }
