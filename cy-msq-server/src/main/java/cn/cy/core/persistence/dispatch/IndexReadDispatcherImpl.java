@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentMap;
 import cn.cy.core.persistence.exception.FileNotFoundByIndexException;
 import cn.cy.core.persistence.file.RandomAccessible;
 import cn.cy.core.persistence.file.msg.MessageFileFactory;
-import cn.cy.core.queue.QueueConfiguration;
 import cn.cy.core.queue.index.OffsetIndex;
 
 /**
@@ -16,8 +15,6 @@ import cn.cy.core.queue.index.OffsetIndex;
 public class IndexReadDispatcherImpl implements IndexReadDispatcher {
 
     private ConcurrentMap<Integer, RandomAccessible> idToFileMap = new ConcurrentHashMap<>();
-
-    private QueueConfiguration queueConfiguration;
 
     private MessageFileFactory messageFileFactory;
 

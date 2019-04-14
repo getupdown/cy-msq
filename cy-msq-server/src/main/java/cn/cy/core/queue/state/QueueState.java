@@ -1,4 +1,4 @@
-package cn.cy.core.queue;
+package cn.cy.core.queue.state;
 
 /**
  * 描述一个队列的状态

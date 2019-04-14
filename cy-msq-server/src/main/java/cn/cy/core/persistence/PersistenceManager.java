@@ -16,7 +16,7 @@ import cn.cy.core.persistence.exception.PersistenceException;
 import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.AppendOnlyShardedFile;
 import cn.cy.core.persistence.file.RandomAccessible;
-import cn.cy.core.queue.QueueState;
+import cn.cy.core.queue.state.QueueState;
 import cn.cy.core.queue.index.ByteIndexBySeq;
 import cn.cy.core.queue.index.OffsetIndex;
 
