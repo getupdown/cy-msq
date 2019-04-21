@@ -31,6 +31,14 @@
             <version>4.1.25.Final</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-example -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-example</artifactId>
+            <version>4.1.25.Final</version>
+        </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/commons-transaction/commons-transaction -->
         <dependency>
             <groupId>commons-transaction</groupId>

@@ -1,4 +1,4 @@
-package cn.cy.core.persistence.file;
+package cn.cy.core.queue.index;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,8 +12,6 @@ import com.alibaba.fastjson.JSON;
 import cn.cy.core.persistence.dispatch.PersistentWriteDispatcher;
 import cn.cy.core.persistence.exception.DuplicateIndexException;
 import cn.cy.core.persistence.exception.PersistenceException;
-import cn.cy.core.queue.index.ByteIndexBySeq;
-import cn.cy.core.queue.index.OffsetIndex;
 
 public class SingleFileByteIndexImpl implements ByteIndexBySeq {
 
@@ -27,24 +25,6 @@ public class SingleFileByteIndexImpl implements ByteIndexBySeq {
 
     public SingleFileByteIndexImpl() {
     }
-
-    //    public SingleFileByteIndexImpl(Path path, Long startSeq) throws IOException {
-    //        this();
-    //        this.path = path;
-    //        concurrentAppendableFile = new ConcurrentAppendableFile(path);
-    //        loadIndex();
-    //    }
-    //
-    //    private void loadIndex() throws IOException {
-    //
-    //        Iterator<String> iterator = Files.readLines(path.toFile(), Charset.defaultCharset()).iterator();
-    //
-    //        while (iterator.hasNext()) {
-    //            String rawIndex = iterator.next();
-    //            OffsetIndex singleIndex = JSON.parseObject(rawIndex, OffsetIndex.class);
-    //            lineCache.put(singleIndex.getMsgOffset(), singleIndex);
-    //        }
-    //    }
 
     @Override
     public OffsetIndex getIndexBySeq(Long seq) {

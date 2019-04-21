@@ -8,11 +8,12 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import cn.cy.io.handler.decoder.JsonRequestDecoder;
 import cn.cy.io.vo.BaseInfo;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
-public class MsgJsonDecoderTest extends BaseTest {
+public class JsonRequestDecoderTest extends BaseTest {
 
     private List<BaseInfo> mqDatas;
 
@@ -37,7 +38,7 @@ public class MsgJsonDecoderTest extends BaseTest {
 
         EmbeddedChannel embeddedChannel = new EmbeddedChannel(
                 new JsonObjectDecoder(),
-                new MsgJsonDecoder()
+                new JsonRequestDecoder()
         );
 
         writeAndFlushDatas(mqDatas, embeddedChannel);

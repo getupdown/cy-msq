@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import cn.cy.io.handler.BaseTest;
-import cn.cy.io.handler.MsgJsonDecoder;
+import cn.cy.io.handler.decoder.JsonRequestDecoder;
 import cn.cy.io.vo.BaseInfo;
 import cn.cy.io.vo.request.CommitRequest;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -45,7 +45,7 @@ public class CommitRequestDispatchHandlerTest extends BaseTest {
 
         EmbeddedChannel embeddedChannel = new EmbeddedChannel(
                 new JsonObjectDecoder(),
-                new MsgJsonDecoder(),
+                new JsonRequestDecoder(),
                 new CommitRequestDispatchHandler()
         );
 

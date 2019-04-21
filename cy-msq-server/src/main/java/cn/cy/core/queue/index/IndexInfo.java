@@ -2,8 +2,6 @@ package cn.cy.core.queue.index;
 
 import java.util.List;
 
-import cn.cy.core.persistence.file.SingleFileByteIndexImpl;
-
 /**
  * indexInfo
  */

@@ -1,4 +1,4 @@
-package cn.cy.io.handler;
+package cn.cy.io.handler.decoder;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import io.netty.util.AttributeKey;
  * 这里是把那些对象,变成业务可以理解的对象的过程
  */
 @ChannelHandler.Sharable
-public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
+public class JsonRequestDecoder extends ChannelInboundHandlerAdapter {
 
     /**
      * 处理真实的对象
@@ -53,7 +53,7 @@ public class MsgJsonDecoder extends ChannelInboundHandlerAdapter {
             ctx.fireChannelRead(baseInfo);
         } else {
             throw new IllegalArgumentException(
-                    "invalid type is received by the MsgJsonDecoder, type is " + msg.getClass());
+                    "invalid type is received by the JsonRequestDecoder, type is " + msg.getClass());
         }
     }
 

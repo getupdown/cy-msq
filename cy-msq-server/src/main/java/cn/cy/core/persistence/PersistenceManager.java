@@ -33,17 +33,28 @@ public class PersistenceManager {
 
     private IndexReadDispatcher readDispatcher;
 
+    private QueueState queueState;
+
+    public PersistenceManager(PersistentWriteDispatcher writeDispatcher,
+                              ByteIndexBySeq byteIndexBySeq,
+                              IndexReadDispatcher readDispatcher,
+                              QueueState queueState) {
+        this.writeDispatcher = writeDispatcher;
+        this.byteIndexBySeq = byteIndexBySeq;
+        this.readDispatcher = readDispatcher;
+        this.queueState = queueState;
+    }
+
     /**
      * 根据队列状态, 把消息写入对应的持久化介质
      *
-     * @param state         队列状态
      * @param queuedMessage 入队消息
      */
-    public void write(QueueState state, QueuedMessage queuedMessage) {
+    public void write(QueuedMessage queuedMessage) {
 
         String rawMsg = JSON.toJSONString(queuedMessage) + "\n";
 
-        Long nextOffset = state.increcOffset();
+        Long nextOffset = queueState.increcOffset();
 
         AppendOnlyShardedFile queueMsgFile = writeDispatcher.dispatchWrite();
 

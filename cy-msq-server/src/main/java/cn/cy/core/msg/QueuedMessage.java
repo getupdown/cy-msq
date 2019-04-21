@@ -28,10 +28,6 @@ public class QueuedMessage {
         return offset;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
     public String getContent() {
         return content;
     }

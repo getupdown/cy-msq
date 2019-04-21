@@ -19,7 +19,11 @@ public class QueueConfiguration {
     // 命名格式
     public final String namingPrefix = "test_queue";
 
-    public final Path msgRootPath = Paths.get("test");
+    public final Path msgRootPath = Paths.get("/Users/getupdown/personal/msq");
 
     public final String queueName = "test_queue";
+
+    public static class Builder {
+
+    }
 }
