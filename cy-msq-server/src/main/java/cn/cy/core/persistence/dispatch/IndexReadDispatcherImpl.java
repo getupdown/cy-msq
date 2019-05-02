@@ -3,10 +3,10 @@ package cn.cy.core.persistence.dispatch;
 import java.util.concurrent.ExecutionException;
 
 import cn.cy.common.ConcurrentFinalCache;
+import cn.cy.core.config.QueueConfiguration;
 import cn.cy.core.persistence.exception.FileNotFoundByIndexException;
 import cn.cy.core.persistence.file.RandomAccessible;
 import cn.cy.core.persistence.file.msg.MessageFileFactory;
-import cn.cy.core.queue.QueueConfiguration;
 import cn.cy.core.queue.index.OffsetIndex;
 
 /**

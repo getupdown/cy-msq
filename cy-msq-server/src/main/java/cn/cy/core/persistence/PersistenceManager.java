@@ -16,9 +16,9 @@ import cn.cy.core.persistence.exception.PersistenceException;
 import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.AppendOnlyShardedFile;
 import cn.cy.core.persistence.file.RandomAccessible;
-import cn.cy.core.queue.state.QueueState;
 import cn.cy.core.queue.index.ByteIndexBySeq;
 import cn.cy.core.queue.index.OffsetIndex;
+import cn.cy.core.queue.state.QueueState;
 
 /**
  * 这里封装了所有的持久化相关过程
@@ -90,10 +90,7 @@ public class PersistenceManager {
 
         QueuedMessage queuedMessage = JSON.parseObject(rawMsg, QueuedMessage.class);
 
-        // 校验和不相等, 抛出异常
-        if (!queuedMessage.getCheckSum().equals(offsetIndex.getCheckSum())) {
-            throw new CheckSumException();
-        }
+        // todo 校验和
 
         return queuedMessage;
     }

@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import cn.cy.common.ConcurrentFinalCache;
+import cn.cy.core.config.QueueConfiguration;
 import cn.cy.core.persistence.exception.PersistenceException;
 import cn.cy.core.persistence.file.QueueMsgFile;
 import cn.cy.core.persistence.file.msg.MessageFileFactory;
-import cn.cy.core.queue.QueueConfiguration;
 
 /**
  * 消息文件读写分配实现

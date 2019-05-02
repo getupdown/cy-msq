@@ -1,0 +1,3 @@
+max_msg_per_file: 100000
+naming_prefix: test_queue
+msg_root_path: /home/msq/message

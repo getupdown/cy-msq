@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import cn.cy.core.queue.QueueConfiguration;
+import cn.cy.core.config.QueueConfiguration;
 
 /**
  * 创建消息文件的工厂

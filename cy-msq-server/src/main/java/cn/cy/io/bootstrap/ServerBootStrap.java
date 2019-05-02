@@ -13,8 +13,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 public class ServerBootStrap {
     private int port;
 
-    public ServerBootStrap(int port) {
+    private CustomizeProtocolInitializer customizeProtocolInitializer;
+
+    public ServerBootStrap(int port, CustomizeProtocolInitializer customizeProtocolInitializer) {
         this.port = port;
+        this.customizeProtocolInitializer = customizeProtocolInitializer;
     }
 
     public void run() throws Exception {
@@ -24,7 +27,7 @@ public class ServerBootStrap {
             ServerBootstrap b = new ServerBootstrap(); // (2)
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class) // (3)
-                    .childHandler(new CustomizeProtocolInitializer())
+                    .childHandler(customizeProtocolInitializer)
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
@@ -48,6 +51,6 @@ public class ServerBootStrap {
         } else {
             port = 8100;
         }
-        new ServerBootStrap(port).run();
+        new ServerBootStrap(port, new PersistenceTestInitializer()).run();
     }
 }

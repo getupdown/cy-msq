@@ -2,8 +2,8 @@ package cn.cy.core.persistence.dispatch;
 
 import java.util.List;
 
+import cn.cy.core.config.QueueConfiguration;
 import cn.cy.core.persistence.file.QueueMsgFile;
-import cn.cy.core.queue.QueueConfiguration;
 
 public class MessageFileWriteDispatcherDebug extends MessageFileWriteDispatcher {
 

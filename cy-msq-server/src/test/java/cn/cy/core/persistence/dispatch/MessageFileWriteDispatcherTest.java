@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import cn.cy.core.config.QueueConfiguration;
 import cn.cy.core.persistence.file.AppendInfoWithId;
 import cn.cy.core.persistence.file.QueueMsgFile;
-import cn.cy.core.queue.QueueConfiguration;
 
 public class MessageFileWriteDispatcherTest {
 
