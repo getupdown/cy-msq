@@ -2,10 +2,8 @@
 
 set -e
 git pull
-# 先把core发布到本地仓库
-cd cy-msq-core
+# 再最外层先install
 mvn clean -U install  -DskipTests
-cd ..
 # 再package broker的部分
 cd cy-msq-broker
 mvn clean -U package -Pdev -DskipTests
