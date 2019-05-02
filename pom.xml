@@ -15,7 +15,7 @@
     <modules>
         <module>cy-msq-client</module>
         <module>cy-msq-core</module>
-        <module>cy-msq-server</module>
+        <module>cy-msq-broker</module>
     </modules>
 
     <properties>
