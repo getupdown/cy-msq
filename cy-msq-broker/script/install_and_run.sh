@@ -2,6 +2,7 @@
 
 set -e
 git pull
+cd ..
 mvn clean -U install -Pdev -DskipTests
 mv target/msq-broker.jar /home/msq/project
 
