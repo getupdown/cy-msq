@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>cn.cy</groupId>
-            <artifactId>cy-msq-server</artifactId>
+            <artifactId>cy-msq-broker</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
