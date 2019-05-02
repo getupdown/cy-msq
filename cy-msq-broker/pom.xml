@@ -13,7 +13,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cy-msq-server</artifactId>
+    <artifactId>cy-msq-broker</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
